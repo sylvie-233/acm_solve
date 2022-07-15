@@ -202,7 +202,167 @@ void init() {
 #### 1.单点更新，区间求和
 
 ```c++
+/**
+ * @brief 树状数组（单点更新，区间求和）
+ *  数据范围：1~n 
+ * 
+ */
+int n, arr[N], bit[N];
 
+int sum(int i) {
+    int res = 0;
+    while (i > 0) {
+        res += bit[i];
+        i -= i & -i;
+    }
+}
+
+void add(int i, int v) {
+    while (i <= n) {
+        bit[i] += v;
+        i += i & -i;
+    }
+}
+
+void init() {
+    for (int i = 1; i <= n; i++) {
+        add(i, arr[i]);
+    }
+}
+```
+
+
+
+#### 2.区间更新，单点查询
+
+```c++
+/**
+ * @brief 树状数组（区间更新，单点查询）
+ *  数据范围：1~n
+ * 
+ */
+int n, arr[N], bit[N];
+
+int sum(int i) {
+    int res = 0;
+    while (i > 0) {
+        res += bit[i];
+        i -= i & -i;
+    }
+}
+
+void add(int i, int v) {
+    while (i <= n) {
+        bit[i] += v;
+        i += i & -i;
+    }
+}
+
+void update(int l, int r, int v) {
+    add(l, v);
+    add(r + 1, -v);
+}
+
+void init() {
+    for (int i = 1; i <= n; i++) {
+        add(i, arr[i] - arr[i - 1]);
+    }
+}
+```
+
+
+
+#### 3.区间更新，区间查询
+
+```c++
+/**
+ * @brief 树状数组（区间更新，区间查询）
+ *  数据范围：1~n，bit[i][0]为公式前面，bit[i][1]为公式后面
+ *     arr[1~3]：
+ *        (3+1)*(c[1]+c[2]+c[3])-(1*c[1]+2*c[2]+3*c[3])
+ * 
+ */
+int n, arr[N], bit[N][2];
+
+int sum(int i, int f) {
+    int res = 0;
+    while (i > 0) {
+        res += bit[i][f];
+        i -= i & -i;
+    }
+}
+
+void add(int i, int v, int f) {
+    while (i <= n) {
+        bit[i][f] += v;
+        i += i & -i;
+    }
+}
+
+void update(int l, int r, int v) {
+    add(l, v, 0);
+    add(r + 1, -v, 0);
+    add(l, l * v, 1);
+    add(r + 1, (r + 1) * -v, 1);
+}
+
+int query(int i) {
+    return (i + 1) * sum(i, 0) - sum(i, 1);
+}
+
+void init() {
+    for (int i = 1; i <= n; i++) {
+        add(i, arr[i] - arr[i - 1], 0);
+        add(i, i * (arr[i] - arr[i - 1]), 1);
+    }
+}
+```
+
+
+
+#### 4.单点更新，区间最值
+
+```c++
+/**
+ * @brief 树状数组（单点更新，区间最值）
+ *  数据范围：1~n，这里算的是max，最小值只需把max换成min即可
+ *     7(111)   6(110)      4(100)
+ *              5(101)   2(010) 3(101)
+ *                       1(001)
+ */
+int n, arr[N], bit[N];
+
+void update(int i) {
+    while (i <= n) {
+        bit[i] = arr[i];
+        int x = i & -i;
+        for (int j = 1; j < x; j++) {
+            bit[i] = std::max(bit[i], bit[i - j]);
+        }
+    }
+}
+
+int query(int l, int r) {
+    int res = 0;
+    while (r >= l) {
+        res = std::max(res, arr[r]);
+        r--;
+        while (r - (r & -r) >= l) {
+            res = std::max(res, bit[r]);
+            r -= r & -r;
+        }
+    }
+    return res;
+}
+
+void init() {
+    for (int i = 1; i <= n; i++) {
+        update(i);
+    }
+    // 更新arr[1]
+    arr[1] = 100;
+    update(1);
+}
 ```
 
 
