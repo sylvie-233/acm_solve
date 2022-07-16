@@ -367,6 +367,101 @@ void init() {
 
 
 
+### 线段树
+
+#### 1.单点更新，区间查询
+
+```c++
+/**
+ * @brief 线段树（单点更新，区间查询）
+ *  数据范围：1~n，根标号：1，左节点标号:i<<1，右节点标号：(i<<1)|1
+ *                        1[1~5]
+ *               2[1~3]              3[4~5]
+ *         4[1~2]     5[3~3]      6[4~4] 7[5~5]
+ *     8[1~1] 9[2~2]  
+ *  
+ */ 
+struct node {
+    int l, r, sum, mx;
+};
+int n, arr[N];
+node seg[N << 2];
+
+void pushup(int i) {
+    seg[i].sum = seg[i << 1].sum + seg[(i << 1) | 1].sum;
+    seg[i].mx = std::max(seg[i << 1].mx, seg[(i << 1) | 1].mx);
+}
+
+void build(int i, int l, int r) {
+    seg[i].l = l;
+    seg[i].r = r;
+    if (l == r) {
+        seg[i].sum = arr[l];
+        seg[i].mx = arr[l];
+        return;
+    }
+    int mid = (l + r) / 2;
+    build(i << 1, l, mid);
+    build((i << 1) | 1, mid + 1, r);
+    pushup(i);
+}
+
+int get_sum(int i, int l, int r) {
+    if (seg[i].l == l && seg[i].r == r) {
+        return seg[i].sum;
+    }
+    int mid = (seg[i].l + seg[i].r) /2;
+    if (r <= mid) {
+        return get_sum(i << 1, l, r);
+    } else if (l > mid) {
+        return get_sum((i << 1) | 1, l, r);
+    }
+    return get_sum(i << 1, l, mid) + get_sum((i << 1) | 1, mid + 1, r);
+}
+
+int get_max(int i, int l, int r) {
+    if (seg[i].l == l && seg[i].r == r) {
+        return seg[i].mx;
+    }
+    int mid = (seg[i].l + seg[i].r) /2;
+    if (r <= mid) {
+        return get_max(i << 1, l, r);
+    } else if (l > mid) {
+        return get_max((i << 1) | 1, l, r);
+    }
+    return std::max(get_max(i << 1, l, mid), get_max((i << 1) | 1, mid + 1, r));
+}
+
+void add(int i, int k, int v) {
+    if (seg[i].l == k && seg[i].r == k) {
+        seg[i].sum += v;
+        seg[i].mx += v;
+        return;
+    }
+    int mid = (seg[i].l + seg[i].r) / 2;
+    if (k <= mid) {
+        add(i << 1, k, v);
+    } else {
+        add((i << 1) | 1, k, v);
+    }
+    pushup(i);
+}
+
+void solve() {
+    build(1, 1, n);
+}
+```
+
+
+
+#### 2.区间更新，区间查询
+
+```c++
+
+```
+
+
+
 
 
 ## 三、数论
