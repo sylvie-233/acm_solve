@@ -457,7 +457,84 @@ void solve() {
 #### 2.区间更新，区间查询
 
 ```c++
+/**
+ * @brief 线段树（区间更新，区间查询）
+ *  数据范围：1~n，根标号：1，左节点标号:i<<1，右节点标号：(i<<1)|1
+ *                        1[1~5]
+ *               2[1~3]              3[4~5]
+ *         4[1~2]     5[3~3]      6[4~4] 7[5~5]
+ *     8[1~1] 9[2~2]  
+ *  
+ */ 
+struct node {
+    int l, r, sum;
+};
+int arr[N], lz[N << 2];
+node seg[N << 2];
 
+void pushdown(int rt, int m) {
+    if (lz[rt]) {
+        lz[rt << 1] += lz[rt];
+        lz[(rt << 1) | 1] += lz[rt];
+        seg[rt << 1].sum += lz[rt] * (m - (m >> 1));
+        seg[(rt << 1) | 1].sum += lz[rt] * (m >> 1);
+        lz[rt] = 0;
+    }
+}
+
+void pushup(int rt) {
+    seg[rt].sum = seg[rt << 1].sum + seg[(rt << 1) | 1].sum;
+}
+
+void build(int l, int r, int rt) {
+    seg[rt].l = l;
+    seg[rt].r = r;
+    lz[rt] = 0;
+    if (l == r) {
+        seg[rt].sum = arr[l];
+        return;
+    }
+    int mid = (l + r) >> 1;
+    build(l, mid, rt << 1);
+    build(mid + 1, r, (rt << 1) | 1);
+    pushup(rt);
+}
+
+int query(int l, int r, int rt) {
+    if (seg[rt].l == l && seg[rt].r == r) {
+        return seg[rt].sum;
+    }
+    int mid = (seg[rt].l + seg[rt].r) >> 1;
+    pushdown(rt, seg[rt].r - seg[rt].l + 1);
+    if (r <= mid) {
+        return query(l, r, rt << 1);
+    } else if (l > mid) {
+        return query(l, r, (rt << 1) | 1);
+    }
+    return query(l, mid, rt << 1) + query(mid + 1, r, (rt << 1) | 1);
+}
+
+void update(int v, int l, int r, int rt) {
+    if (seg[rt].l == l && seg[rt].r == r) {
+        lz[rt] += v;
+        seg[rt].sum += v * (r - l + 1);
+        return;
+    }
+    if (seg[rt].l == seg[rt].r) {
+        return;
+    }
+    int mid = (seg[rt].l + seg[rt].r) >> 1;
+    pushdown(rt, seg[rt].r - seg[rt].l + 1);
+    if (r <= mid) {
+        update(v, l, r, rt << 1);
+    } else if (l > mid) {
+        update(v, l, r, (rt << 1) | 1);
+    } else {
+        update(v, l, mid, rt << 1);
+        update(v, mid + 1, r, (rt << 1) | 1);
+    }
+    pushup(rt);
+}
 ```
 
 
