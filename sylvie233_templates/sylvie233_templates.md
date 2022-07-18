@@ -18,6 +18,153 @@
 
 ## 一、图论
 
+### 最短路
+
+#### 1.dijkstra（单源最短路）
+
+```c++
+/**
+ * @brief dijkstra单源最短路 
+ *  数据范围：0~n-1
+ * 
+ */
+int n;
+int cost[N][N], d[N];
+bool used[N];
+
+void dijkstra(int s) {
+    std::fill(d, d + n, INF);
+    std::fill(used, used + n, false);
+    d[s] = 0;
+    while (true) {
+        int v = -1;
+        for (int w = 0; w < n; w++) {
+            if (!used[w] && (v == -1 || d[w] < d[v])) {
+                v = w;
+            }
+        }
+        if (v == -1) {
+            break;
+        }
+        used[v] = true;
+        for (int w = 0; w < n; w++) {
+            d[w] = std::min(d[w], d[v] + cost[v][w]);
+        }
+    }
+}
+```
+
+
+
+#### 2.dijkstra（单源最短路，优先队列优化）
+
+```c++
+/**
+ * @brief dijkstra单源最短路 （优先队列优化）
+ *  数据范围：0~n-1
+ * 
+ */
+struct edge {
+    int to, cost;
+};
+int n, d[N];
+std::vector<edge> G[N];
+
+void dijkstra(int s) {
+    std::priority_queue<P, std::vector<P>, std::greater<P>> que;
+    std::fill(d, d + n, INF);
+    d[s] = 0;
+    que.push(P(0, s));
+    while (!que.empty()) {
+        P p = que.top();
+        que.pop();
+        int v = p.second;
+        if (d[v] < p.first) {
+            continue;
+        }
+        for (int i = 0; i < G[v].size(); i++) {
+            edge e = G[v][i];
+            if (d[e.to] > d[v] + e.cost) {
+                d[e.to] = d[v] + e.cost;
+                que.push(P(d[e.to], e.to));
+            }
+        }
+    }
+}
+```
+
+
+
+### 最小生成树
+
+#### 1.kruskal
+
+```c++
+/**
+ * @brief kruskal（并查集）
+ *  数据范围：0~n、0~m-1
+ * 
+ */
+struct edge {
+    int v, w, cost;
+};
+edge es[N];
+int n, m;
+int par[N], rk[N];
+
+void init() {
+    for (int i = 0; i < n; i++) {
+        par[i] = i;
+        rk[i] = 0;
+    }
+}
+
+int find(int x) {
+    if (par[x] == x) {
+        return x;
+    }
+    return par[x] = find(par[x]);
+}
+
+void unite(int x, int y) {
+    x = find(x);
+    y = find(y);
+    if (x == y) {
+        return;
+    }
+    if (rk[x] < rk[y]) {
+        par[x] = y;
+    } else {
+        par[y] = x;
+        if (rk[x] == rk[y]) {
+            rk[x]++;
+        }
+    }
+}
+
+bool same(int x, int y) {
+    return find(x) == find(y);
+}
+
+int kruskal() {
+    std::sort(es, es + m, [](edge a, edge b) {
+        return a.cost < b.cost;
+    });
+    init();
+    int res = 0;
+    for (int i = 0; i < m; i++) {
+        edge e = es[i];
+        if (!same(e.v, e.w)) {
+            unite(e.v, e.w);
+            res += e.cost;
+        }
+    }
+    return res;
+}
+```
+
+
+
 
 
 ## 二、数据结构
