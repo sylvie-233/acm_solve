@@ -165,6 +165,47 @@ int kruskal() {
 
 
 
+### 二分图
+
+#### 1.二分图匹配（最大匹配数）
+
+```c++
+/**
+ * @brief 二分图匹配（最大匹配数）
+ *  数据范围：1~n、1~m
+ * 
+ */
+int n, m;
+bool used[N];
+int match[N], G[N][N];
+
+int find(int x) {
+    for (int i = 1; i <= m; i++) {
+        if (!used[i] && G[x][i]) {
+            used[i] = true;
+            if (!match[i] || find(match[i])) {
+                match[i] = x;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int solve() {
+    int res = 0;
+    for (int i = 1; i <= n; i++) {
+        std::memset(used, 0, sizeof(used));
+        if (find(i)) {
+            res++;
+        }
+    }
+    return res;
+}
+```
+
+
+
 
 
 ## 二、数据结构
@@ -208,6 +249,42 @@ int pop() {
     hp[index] = x;
     return ret;
 } 
+```
+
+
+
+### 单调栈（柱形图包含的长方形的最大面积）
+
+```c++
+/**
+ * @brief 单调栈（柱形图包含的长方形的最大面积）
+ *  数据范围：1~n
+ */
+int n, h[N], l[N], r[N];
+
+int solve() {
+    std::stack<int> sta;
+    for (int i = 1; i <= n; i++) {
+        while (!sta.empty() && h[sta.top()] >= h[i]) {
+            sta.pop();
+        }
+        l[i] = sta.empty() ? 1 : sta.top() + 1;
+        sta.push(i);
+    }
+    std::stack<int> sta2;
+    for (int i = n; i >= 1; i++) {
+        while (!sta2.empty() && h[sta2.top()] >= h[i]) {
+            sta2.pop();
+        }
+        r[i] = sta2.empty() ? n : sta2.top() - 1;
+        sta2.push(i);
+    }
+    int res = 0;
+    for (int i = 1; i <= n; i++) {
+        res = std::max(res, (r[i] - l[i] + 1) * h[i]);
+    }
+    return res;
+}
 ```
 
 
@@ -709,6 +786,81 @@ void update(int v, int l, int r, int rt) {
 
 
 ## 八、动态规划
+
+### 背包问题
+
+#### 1.01背包
+
+```c++
+for (int i = 0; i < n; i++) {
+    for (int j = m; j >= w[i]; j--) {
+        dp[j] = std::max(dp[j], dp[j - w[i]] + v[i]);
+    }
+}
+```
+
+
+
+#### 2.完全背包
+
+```c++
+for (int i = 0; i <= n; i++) {
+    for (int j = w[i]; j <= m; j++) {
+        dp[j] = std::max(dp[j], dp[j - w[i]] + v[i]);
+    }
+}
+```
+
+
+
+#### 3.多重背包
+
+```c++
+for (int i = 0; i < n; i++) {
+    for (int j = m; j >= w[i]; j--) {
+        for (int k = 1; k <= c[i] && j >= k * w[i]; k++) {
+            dp[j] = std::max(dp[j], dp[j - k * w[i]] + k * [i]);
+        }
+    }
+}
+```
+
+
+
+### 最长子序列问题
+
+#### 1.最长公共子序列
+
+```c++
+for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+        if (s[i] == t[j]) {
+            dp[i + 1][j + 1] = dp[i][j] + 1;
+        } else {
+            dp[i + 1][j + 1] = std::max(dp[i + 1][j], dp[i][j + 1]);
+        }
+    }
+}
+```
+
+
+
+#### 2.最长上升子序列
+
+```c++
+int res = 0;
+for (int i = 0; i < n; i++) {
+    dp[i] = 1;
+    for (int j = 0; j < i; j++) {
+        if (a[j] < a[i]) {
+            dp[i] = std::max(d[i], dp[j] + 1);
+        }
+        res = std::max(res, dp[i]);
+    }
+}
+```
+
+
 
 
 
