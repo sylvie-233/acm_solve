@@ -1,4 +1,4 @@
-# ACM模板
+#  ACM模板
 
 >Author：Sylvie233
 >
@@ -766,6 +766,80 @@ void update(int v, int l, int r, int rt) {
 
 
 ## 三、数论
+
+### 快速幂
+
+```c++
+typedef long long ll;
+
+ll qpow(ll a, ll b) {
+    ll res = 1;
+    while (b) {
+        if (b & 1) {
+            res *= a;
+        }
+        a *= a;
+        b >>= 1;
+    }
+    return res;
+}
+
+ll qpow(ll a, ll b, ll mod) {
+    ll res = 1;
+    a %= mod;
+    while (b) {
+        if (b & 1) {
+            res = res * a % mod;
+        }
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return res;
+}
+```
+
+
+
+### 欧几里得定理
+
+```c++
+/**
+ * @brief 欧几里得定理
+ *  a=kb+r
+ */
+
+int gcd(int a, int b) {
+    return b ? gcd(b, a % b) : a;
+}
+
+```
+
+
+
+### 扩展欧几里得定理
+
+```c++
+/**
+ * @brief 欧几里得定理
+ *  ax+by=gcd(a,b)=gcd(b,a%b)=b*x0+(a%b)*y0
+ *      x0,y0为下层的值
+ *  ax+by=a*y0+b*(x0-[a/b]*y0)，已递归求出下层的x0，y0，
+ *  反过来求当前层的x，y：x=y0，y=x0-[a/b]*y0
+ */
+int exgcd(int a, int b, int& x, int& y) {
+    int res = a;
+    if (b) {
+        res = exgcd(b, a % b, y, x);
+        y -= (a / b) * x;
+    } else {
+        x = 1;
+        y = 0;
+    }
+    return res;
+}
+```
+
+
 
 
 
