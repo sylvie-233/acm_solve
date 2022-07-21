@@ -206,6 +206,73 @@ int solve() {
 
 
 
+### Tarjin（强连通分量分解、缩点）
+
+```c++
+/**
+ * @brief Tarjin（强连通分量分解、缩点）
+ * 数据范围：0~m-1、0~n-1
+ */
+struct {
+    int v, next;
+} edge[N];
+int cnt, head[N];
+int top, flag, tot, sta[N], dfn[N], low[N], id[N];
+bool used[N];
+
+void add_edge(int u, int v) {
+    edge[cnt].v = v;
+    edge[cnt].next = head[u];
+    head[u] = cnt++;
+}
+
+void init() {
+    cnt = top = flag = tot = 0;
+    std::memset(head, -1, sizeof(head));
+    std::memset(dfn, 0, sizeof(dfn));
+    std::memset(used, 0, sizeof(used));
+}
+
+void tarjin(int u) {
+    dfn[u] = low[u] = ++flag;
+    used[u] = true;
+    sta[top++] = u;
+    for (int i = head[u]; i != -1; i = edge[i].next) {
+        int v = edge[i].v;
+        if (!dfn[v]) {
+            tarjin(v);
+            low[u] = std::min(low[u], low[v]);
+        } else if (used[v]) {
+            low[u] = std::min(low[u], dfn[v]);
+        }
+    }
+    if (dfn[u] == low[u]) {
+        tot++;
+        int t;
+        do {
+            t = sta[--top];
+            used[t] = false;
+            id[t] = tot;
+        } while(t != u);
+    }
+}
+
+void solve() {
+    int n, m, u, v; // 删除
+    init();
+    for (int i = 0; i < m; i++) {
+        add_edge(u, v);
+    }
+    for (int i = 1; i <= n; i++) {
+        if (!dfn[i]) {
+            tarjin(i);
+        }
+    }
+}
+```
+
+
+
 
 
 ## 二、数据结构
@@ -844,6 +911,45 @@ int exgcd(int a, int b, int& x, int& y) {
 
 
 ## 四、字符串
+
+### Manacher（最大回文子串：回文半径） 
+
+```c++
+/**
+ * @brief Manacher（最大回文子串：回文半径） 
+ *  数据范围：N为字符串长度的两倍，
+ *      p为当前mx最远的回文串的中心 
+ */
+int Len[N];
+
+int manacher(std::string s) {
+    std::string t;
+    t += "^";
+    t += "#";
+    for (int i = 0; i < s.size(); i++) {
+        t += s[i];
+        t += "#";
+    }
+    t += "$";
+    int len = t.size(), p = 0, mx = 0, res = 0;
+    for (int i = 1; i <= len - 2; i++) {
+        Len[i] = mx > i ? std::min(Len[2 * p - i], mx - i) : 1;
+        while (t[i + Len[i]] == t[i - Len[i]]) {
+            Len[i]++;
+        }
+        if (i + Len[i] > mx) {
+            mx = i + Len[i];
+            p = i;
+        }
+        res = std::max(res, Len[i] - 1);
+    }
+    return res;
+}
+```
+
+
+
+
 
 
 
