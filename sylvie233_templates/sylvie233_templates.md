@@ -1,4 +1,4 @@
-#  ACM模板
+#   ACM模板
 
 >Author：Sylvie233
 >
@@ -944,6 +944,128 @@ int manacher(std::string s) {
         res = std::max(res, Len[i] - 1);
     }
     return res;
+}
+```
+
+
+
+### 普通kmp
+
+```c++
+/**
+ * @brief kmp（字符串匹配、个数统计）
+ *  数据范围：1~n-1
+ */
+int next[N];
+
+void get_next(char* T) {
+    int i = 0, j = -1, len = std::strlen(T);
+    next[0] = -1;
+    while (i < len) {
+        if (j == -1 || T[i] == T[j]) {
+            next[++i] = ++j;
+        } else {
+            j = next[j];
+        }
+    }
+}
+
+int kmp_index(char* S, char* T) {
+    int i = 0, j = 0, len_s = std::strlen(S), len_t = std::strlen(T);
+    get_next(T);
+    while (i < len_s && j < len_t) {
+        if (j == -1 || S[i] == T[j]) {
+            i++;
+            j++;
+        } else {
+            j = next[j];
+        }
+    }
+    if (j == len_t) {
+        return i - len_t;
+    }
+    return -1;
+}
+
+int kmp_count(char* S, char* T) {
+    int res = 0, len_s = std::strlen(S), len_t = std::strlen(T);
+    if (len_s == 1 && len_t == 1) {
+        if (S[0] == T[0]) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    get_next(T);
+    for (int i = 0, j = 0; i < len_s; i++) {
+        while (j > 0 && S[i] != T[j]) {
+            j = next[j];
+        }
+        if (S[i] == T[j]) {
+            j++;
+        }
+        if (j == len_t) {
+            res++;
+            j = next[j];
+        }
+        return res;
+    }
+}
+```
+
+
+
+### 扩展kmp（后缀匹配前缀）
+
+```c++
+/**
+ * @brief 扩展kmp（后缀匹配前缀）
+ *  数据范围：0~n-1
+ */
+int next[N], extend[N];
+
+void get_next(std::string t) {
+    int p = 0, len = t.size();
+    next[0] = len;
+    while (p + 1 < len && t[p] == t[p + 1]) {
+        p++;
+    }
+    next[1] = p;
+    p = 1;
+    for (int i = 2; i < len; i++) {
+        if (i + next[i - p] < p + next[p]) {
+            next[i] = next[i - p];
+        } else {
+            int j = p + next[p] - i > 0 ? p + next[p] - i : 0;
+            while (i + j < len && t[j] == t[i + j]) {
+                j++;
+            }
+            next[i] = j;
+            p = i;
+        }
+    }
+}
+
+void get_extend(std::string s, std::string t) {
+    int p = 0, i = 0, len_s = s.size(), len_t = t.size();
+    get_next(t);
+    while (i < len_s && i < len_t && s[i] == t[i]) {
+        i++;
+    }
+    extend[0] = i;
+    p = 0;
+    for (i = 1; i < len_s; i++) {
+        if (i + next[i - p] < p + extend[p]) {
+            extend[i] = next[i - p];
+        } else {
+            int j = p + extend[p] - i > 0 ? p + extend[p] - i : 0;
+            while (i + j < len_s && j < len_t && t[j] == s[i + j]) {
+                j++;
+            }
+            extend[i] = j;
+            p = i;
+        }
+    }
 }
 ```
 
