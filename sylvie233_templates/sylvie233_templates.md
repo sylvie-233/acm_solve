@@ -1071,6 +1071,94 @@ void get_extend(std::string s, std::string t) {
 
 
 
+### 字典树
+
+```c++
+/**
+ * @brief 字典树
+ *  数据范围：1~n，0为头结点
+ */
+struct node {
+    int cnt;
+    int next[26];
+    void init() {
+        cnt = 0;
+        std::memset(next, -1, sizeof(next));
+    }
+} T[N];
+int cnt;
+
+void insert(std::string s) {
+    int p = 0;
+    for (int i = 0; i < s.size(); i++) {
+        int j = s[i] - 'a';
+        if (T[p].next[j] == -1) {
+            T[cnt].init();
+            T[p].next[j] = cnt++;
+        }
+        p = T[p].next[j];
+        T[p].cnt++;
+    }
+}
+
+bool query(std::string s) {
+    int p = 0;
+    for (int i = 0; i < s.size(); i++) {
+        int j = s[i] - 'a';
+        if (T[p].next[j] == -1) {
+            return false;
+        }
+        p = T[p].next[j];
+    }
+    return true;
+}
+```
+
+
+
+### 01字典树（求异或值最大的数）
+
+```c++
+/**
+ * @brief 01字典树（求异或值最大的数）
+ *  数据范围：1~n*32，0为头结点
+ */
+int cnt, trie[N * 32][2];
+ll val[N * 32];
+
+void init() {
+    cnt = 1;
+    std::memset(trie[0], 0, sizeof(trie[0]));
+}
+
+void insert(ll x) {
+    int u = 0;
+    for (int i = 32; i >= 0; i--) {
+        int v = (x >> i) & 1;
+        if (!trie[u][v]) {
+            std::memset(trie[cnt], 0, sizeof(trie[cnt]));
+            val[cnt] = 0;
+            trie[u][v] = cnt++;
+        }
+        u = trie[u][v];
+    }
+    val[u] = x;
+}
+
+ll query(ll x) {
+    int u = 0;
+    for (int i = 32; i >= 0; i--) {
+        int v = (x >> i) & 1;
+        if (trie[u][v ^ 1]) {
+            u = trie[u][v ^ 1];
+        } else {
+            u = trie[u][v];
+        }
+    }
+    return val[u];
+}
+```
+
 
 
 
