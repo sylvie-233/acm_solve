@@ -1165,6 +1165,42 @@ ll query(ll x) {
 
 ## 五、其它算法
 
+### 分块算法
+
+#### 1.区间更新，单点查询
+
+```c++
+/**
+ * @brief 区间更新，单点查询
+ *  数据范围：1~n
+ */
+int n, len, id[N], lazy[N], data[N];
+
+void add(int l, int r, int v) {
+    for (int i = l; i <= std::min(id[l] * len, r); i++) {
+        data[i] += v;
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            data[i] += v;
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        lazy[i] += v;
+    }
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1; 
+    }
+    // data[i] + lazy[id[i]]
+}
+```
+
+
+
 
 
 ## 六、基础算法
