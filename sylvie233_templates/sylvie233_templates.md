@@ -1201,6 +1201,406 @@ void solve() {
 
 
 
+#### 2.区间更新，查询区间内小于x的元素的个数
+
+```c++
+/**
+ * @brief 区间更新，查询区间内小于x的元素的个数
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy[N];
+std::vector<int> bkt[M];
+int n, d[N];
+
+void reset(int x) {
+    bkt[x].clear();
+    for (int i = (x - 1) * len + 1; i < std::min(x * len, n); i++) {
+        bkt[x].push_back(d[i]);
+    }
+    std::sort(bkt[x].begin(), bkt[x].end());
+}
+
+void add(int l, int r, int v) {
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        d[i] += v;
+    }
+    reset(id[l]);
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            d[i] += v;
+        }
+        reset(id[r]);
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        lazy[i] += v;
+    }
+}
+
+int query(int l, int r, int v) {
+    int res = 0;
+    for (int i = l; i <= std::min(id[l] * len, r); i++) {
+        if (d[i] + lazy[id[l]] < v) {
+            res++;
+        }
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            if (d[i] + lazy[id[r]] < v) {
+                res++;
+            }
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        int x = v - lazy[i];
+        res += std::lower_bound(bkt[i].begin(), bkt[i].end(), x) - bkt[i].begin();
+    }
+    return res;
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+        bkt[id[i]].push_back(d[i]);
+    }
+    for (int i = 1; i <= id[n]; i++) {
+        std::sort(bkt[i].begin(), bkt[i].end());
+    }
+}
+
+```
+
+
+
+#### 3.区间更新，查询区间小于x的最大值
+
+```c++
+/**
+ * @brief 区间更新，查询区间小于x的最大值
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy[N];
+std::set<int> st[M];
+int n, d[N];
+
+void add(int l, int r, int v) {
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        st[id[l]].erase(d[i]);
+        d[i] += v;
+        st[id[l]].insert(d[i]);
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            st[id[r]].erase(d[i]);
+            d[i] += v;
+            st[id[r]].insert(d[i]);
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        lazy[i] += v;
+    }
+}
+
+int query(int l, int r, int v) {
+    int res = -1;
+    for (int i = l; i <= std::min(id[l] * len, r); i++) {
+        if (d[i] + lazy[id[l]] < v) {
+            res = std::max(res, d[i] + lazy[id[l]]);
+        }
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            if (d[i] + lazy[id[r]] < v) {
+                res = std::max(res, d[i] + lazy[id[r]]);
+            }
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        auto it = st[i].lower_bound(v - lazy[i]);
+        if (it == st[i].begin()) {
+            continue;
+        }
+        res = std::max(res, *(--it) + lazy[i]);
+    }
+    return res;
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+        st[id[i]].insert(d[i]);
+    }
+}
+```
+
+
+
+#### 4.区间更新，区间求和
+
+```c++
+/**
+ * @brief 区间更新，区间求和
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy[N];
+int sum[M];
+int n, d[N];
+
+void add(int l, int r, int v) {
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        d[i] += v;
+        sum[id[l]] += v;
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            d[i] += v;
+            sum[id[r]] += v;
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        lazy[i] += v;
+    }
+}
+
+int query(int l, int r, int v) {
+    int res = 0;
+    for (int i = l; i <= std::min(id[l] * len, r); i++) {
+        res += d[i] + lazy[id[l]];
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            res += d[i] + lazy[id[r]];
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        res += sum[i] + len * lazy[i];
+    }
+    return res;
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+        sum[id[i]] += d[i];
+    }
+}
+```
+
+
+
+#### 5.区间开方，区间求和
+
+```c++
+/**
+ * @brief 区间开方，区间求和
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy[N];
+bool used[M], sum[M];
+int n, d[N];
+
+void exec_sqrt(int x) {
+    if (used[x]) {
+        return;
+    }
+    used[x] = true;
+    sum[x] = 0;
+    for (int i = (x - 1) * len + 1; i <= x * len; i++) {
+        d[i] = std::sqrt(d[i]);
+        sum[x] += d[i];
+        if (d[i] > 1) {
+            used[x] = false;
+        }
+    }
+}
+
+void add(int l, int r) {
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        sum[id[l]] -= d[i];
+        d[i] = std::sqrt(d[i]);
+        sum[id[l]] += d[i];
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            sum[id[r]] -= d[i];
+            d[i] = std::sqrt(d[i]);
+            sum[id[r]] += d[i];
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        exec_sqrt(i);
+    }
+}
+
+int query(int l, int r, int v) {
+    int res = 0;
+    for (int i = l; i <= std::min(id[l] * len, r); i++) {
+        res += d[i];
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            res += d[i];
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        res += sum[i];
+    }
+    return res;
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+        sum[id[i]] += d[i];
+    }
+}
+```
+
+
+
+#### 6.区间乘法，区间加法，单点查询
+
+```c++
+/**
+ * @brief 区间乘法，区间加法，单点查询
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy_add[M], lazy_mul[M];
+int n, d[N];
+
+void reset(int x) {
+    for (int i = (x - 1) * len + 1; i <= std::min(x * len, n); i++) {
+        d[i] = d[i] * lazy_mul[x] + lazy_add[x];
+    }
+    lazy_mul[x] = 1;
+    lazy_add[x] = 0;
+}
+
+void add(int f, int l, int r, int v) {
+    reset(id[l]);
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        if (f) {
+            d[i] *= v;
+        } else {
+            d[i] += v;
+        }
+    }
+    if (id[l] != id[r]) {
+        reset(id[r]);
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            if (f) {
+                d[i] *= v;
+            } else {
+                d[i] += v;
+            }
+
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        if (f) {
+            lazy_mul[i] *= v;
+            lazy_add[i] *= v;
+        } else {
+            lazy_add[i] += v;
+        }
+    }
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+    }
+    for (int i = 1; i <= id[n]; i++) {
+        lazy_add[i] = 0;
+        lazy_mul[i] = 1;
+    }
+    // 查询：d[i]*lazy_mul[id[i]]+lazy[id[i]]
+}
+```
+
+
+
+#### 7.区间查询值为v的个数，并将该区间所有元素改为v
+
+```c++
+/**
+ * @brief 区间查询值为v的个数，并将该区间所有元素改为v
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy[M];
+int n, d[N];
+
+void reset(int x) {
+    if (lazy[x] == -1) {
+        return;
+    }
+    for (int i = (x - 1) * len + 1; i <= std::min(x * len, n); i++) {
+        d[i] = lazy[x];
+    }
+    lazy[x] = -1;
+}
+
+int query(int l, int r, int v) {
+    int res = 0;
+    reset(id[l]);
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        if (d[i] != v) {
+            d[i] = v;
+        } else {
+            res++;
+        }
+    }
+    if (id[l] != id[r]) {
+        reset(id[r]);
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            if (d[i] != v) {
+                d[i] = v;
+            } else {
+                res++;
+            }
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        if (lazy[i] != -1) {
+            if (lazy[i] != v) {
+                lazy[i] = v;
+            } else {
+                res += len;
+            }
+        } else {
+            for (int j = (i - 1) * len + 1; j <= i * len; j++) {
+                if (d[j] != v) {
+                    d[j] = v;
+                } else {
+                    res++;
+                }
+            }
+        }
+    }
+    return res;
+}
+
+void solve() {
+    std::memset(lazy, -1, sizeof(lazy));
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+    }
+}
+```
+
+
+
 
 
 ## 六、基础算法
