@@ -273,6 +273,99 @@ void solve() {
 
 
 
+### 拓扑排序
+
+#### 1.有向图判环
+
+```c++
+/**
+ * @brief 有向图判环
+ *  数据范围：点：1~n，边：1~m  
+ */
+int n, m, in[N];
+std::vector<int> G[N];
+
+bool top_sort() {
+    int res = 0;
+    std::queue<int> que;
+    for (int i = 1; i <= n; i++) {
+        if (!in[i]) {
+            que.push(i);
+        }
+    }
+    while (!que.empty()) {
+        int i = que.front();
+        que.pop();
+        res++;
+        for (int j = 0; j < G[i].size(); j++) {
+            if (!--in[G[i][j]]) {
+                que.push(G[i][j]);
+            }
+        }
+        G[i].clear();
+    }
+    return res != n;
+}
+
+void solve() {
+    int u, v;
+    while (m--) {
+        G[u].push_back(v);
+        in[v]++;
+    }
+    bool ans = top_sort();
+}
+```
+
+
+
+#### 2.有向无环图最长路径
+
+```c++
+/**
+ * @brief 有向无环图最长路径
+ *  数据范围：点：1~n，边：1~m  
+ */
+int n, m, in[N], dp[N];
+std::vector<P> G[N];
+
+void top_sort() {
+    std::queue<int> que;
+    for (int i = 1; i <= n; i++) {
+        if (!in[i]) {
+            que.push(i);
+        }
+    }
+    while (!que.empty()) {
+        int t = que.front();
+        que.pop();
+        for (int i = 0; i < G[t].size(); i++) {
+            int v = G[t][i].first, c = G[t][i].second;
+            if (!--in[v]) {
+                que.push(v);
+            }
+            dp[v] = std::max(dp[v], dp[t] +c);
+        }
+        G[t].clear();
+    }
+}
+
+void solve() {
+    int u, v, c;
+    while (m--) {
+        G[u].push_back(P(v, c));
+        in[v]++;
+    }
+    top_sort();
+    int ans = 0;
+    for (int i = 1; i <= n; i++) {
+        ans = std::max(ans, dp[i]);
+    }
+}
+```
+
+
+
 
 
 ## 二、数据结构
