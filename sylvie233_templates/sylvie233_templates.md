@@ -366,6 +366,75 @@ void solve() {
 
 
 
+### LCA
+
+```c++
+/**
+ * @brief LCA
+ *  数据范围：点：1~n，边：1~2m
+ */
+struct edge {
+    int to, next;
+} es[M << 1];
+int cnt, head[N];
+int d[N], par[N][21];
+
+void add_edge(int u, int v) {
+    es[cnt].to = v;
+    es[cnt].next = head[u];
+    head[u] = cnt++;
+}
+
+void dfs(int u, int f) {
+    d[u] = d[f] + 1;
+    par[u][0] = f;
+    for (int i = 1; (1 << i) <= d[u]; i++) {
+        par[u][i] = par[par[u][i - 1]][i - 1];
+    }
+    for (int i = head[u]; ~i; i = es[i].next) {
+        int v = es[i].to;
+        if (v == f) {
+            continue;
+        }
+        dfs(v, u);
+    }
+} 
+
+int lca(int u, int v) {
+    if (d[u] > d[v]) {
+        std::swap(u, v);
+    }
+    for (int i = 20; i >= 0; i--) {
+        if (d[u] <= d[v] - (1 << i)) {
+            v = par[v][i];
+        }
+    }
+    if (u == v) {
+        return u;
+    }
+    for (int i = 20; i >= 0; i--) {
+        if (par[u][i] != par[v][i]) {
+            u = par[u][i];
+            v = par[v][i];
+        }
+    }
+    return par[u][0];
+}
+
+void solve() {
+    int s, u, v, n, m;
+    std::memset(head, -1, sizeof(head));
+    for (int i = 1; i <= m; i++) {
+        add_edge(u, v);
+        add_edge(v, u);
+    }
+    dfs(s, 0);
+    // lca(u, v)
+}
+```
+
+
+
 
 
 ## 二、数据结构
