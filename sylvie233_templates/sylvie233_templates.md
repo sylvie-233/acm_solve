@@ -435,6 +435,188 @@ void solve() {
 
 
 
+### 树链剖分
+
+```c++
+/**
+ * @brief 树链剖分
+ *  数据范围：1~n
+ * 
+ *  1：将树从x到y节点的最短路径上的所有节点的值都加上z
+ *  2：求树从x到y节点的最短路径上的所有节点的值的和
+ *  3：将以x为根节点的子树上的所有节点值加上z
+ *  4：求以x为根节点的子树上的所有节点值的和
+ */
+struct edge {
+    int to, next;
+} es[M];
+struct node {
+    int l, r, sum;
+} seg[N << 2];
+
+int cnt, head[N];
+int lazy[N << 2];
+int tot, dep[N], sz[N], par[N], id[N], son[N], top[N], val[N];
+int rt, mod, n, m, d[N];
+
+void add_edge(int u, int v) {
+    es[cnt].to = v;
+    es[cnt].next = head[u];
+    head[u] = cnt++;
+}
+
+void pushdown(int i, int len) {
+    if (lazy[i]) {
+        lazy[i << 1] += lazy[i];
+        lazy[i << 1] %= mod;
+        lazy[(i << 1) | 1] += lazy[i];
+        lazy[(i << 1) | 1] %= mod;
+        seg[i << 1].sum = (seg[i << 1].sum + lazy[i] * (len - (len >> 1)) % mod) % mod;
+        seg[(i << 1) | 1].sum = (seg[(i << 1) | 1].sum + lazy[i] * (len >> 1) % mod) % mod;
+        lazy[i] = 0;
+    }
+}
+
+void pushup(int i) {
+    seg[i].sum = (seg[i << 1].sum + seg[(i << 1) | 1].sum) % mod;
+}
+
+void build(int l, int r, int rt) {
+    seg[rt].l = l;
+    seg[rt].r = r;
+    lazy[rt] = 0;
+    if (l == r) {
+        seg[rt].sum = d[l] % mod;
+        return;
+    }
+    int mid = (l + r) >> 1;
+    build(l, mid, rt << 1);
+    build(mid + 1, r, (rt << 1) | 1);
+    pushup(rt);
+}
+
+int get_sum(int l, int r, int rt) {
+    if (seg[rt].l == l && seg[rt].r == r) {
+        return seg[rt].sum;
+    }
+    int mid = (seg[rt].l + seg[rt].r) >> 1;
+    pushdown(rt, seg[rt].r - seg[rt].l + 1);
+    if (r <= mid) {
+        return get_sum(l, r, rt << 1);
+    } else if (l > mid) {
+        return get_sum(l, r, (rt << 1) | 1);
+    }
+    return get_sum(l, mid, rt << 1) + get_sum(mid + 1, r, (rt << 1) | 1);
+}
+
+void update(int v, int l, int r, int rt) {
+    if (seg[rt].l == l && seg[rt].r == r) {
+        lazy[rt] = (lazy[rt] + v) % mod;
+        seg[rt].sum = (seg[rt].sum + v * (r - l + 1) % mod) % mod;
+        return;
+    }
+    if (seg[rt].l == seg[rt].r) {
+        return;
+    }
+    int mid = (seg[rt].l + seg[rt].r) >> 1;
+    pushdown(rt, seg[rt].r - seg[rt].l + 1);
+    if (r <= mid) {
+        update(v, l, r, rt << 1);
+    } else if (l > mid) {
+        update(v, l, r, (rt << 1) | 1);
+    } else {
+        update(v, l, mid, rt << 1);
+        update(v, mid + 1, r, (rt << 1) | 1);
+    }
+    pushup(rt);
+}
+
+void dfs1(int u, int f, int depth) {
+    dep[u] = depth;;
+    sz[u] = 1;
+    son[u] = 0;
+    par[u] = f;
+    for (int i = head[u]; ~i; i = es[i].next) {
+        int v = es[i].to;
+        if (v == f) {
+            continue;
+        }
+        dfs1(v, u, depth + 1);
+        sz[u] += sz[v];
+        if (sz[son[u]] < sz[v]) {
+            son[u] = v;
+        }
+    }
+}
+
+void dfs2(int u, int tp) {
+    top[u] = tp;
+    id[u] = ++tot;
+    val[tot] = d[u];
+    if (son[u]) {
+        dfs2(son[u], tp);
+    }
+    for (int i = head[u]; ~i; i = es[i].next) {
+        int v = es[i].to;
+        if (v == par[u] || v == son[u]) {
+            continue;
+        }
+        dfs2(v, v);
+    }
+}
+
+void add(int u, int v, int w) {
+    while (top[u] != top[v]) {
+        if (dep[top[u]] < dep[top[v]]) {
+            std::swap(u, v);
+        }
+        update(1, id[top[u]], id[u], w);
+        u = par[top[u]];
+    }
+    if (dep[u] > dep[v]) {
+        std::swap(u, v);
+    }
+    update(1, id[u], id[v], w);
+}
+
+int sum(int u, int v) {
+    int res = 0;
+    while (top[u] != top[v]) {
+        if (dep[top[u]] < dep[top[v]]) {
+            std::swap(u, v);
+        }
+        res = (res + get_sum(1, id[top[u]], id[u])) % mod;
+        u = par[top[u]];
+    }
+    if (dep[u] > dep[v]) {
+        std::swap(u, v);
+    }
+    res = (res + get_sum(1, id[u], id[v])) % mod;
+    return res;
+}
+
+void solve() {
+    int u, v;
+    std::memset(head, -1, sizeof(head));
+    while (m--) {
+        add_edge(u, v);
+        add_edge(v, u);
+    }
+    dfs1(rt, 0, 1);
+    dfs2(rt, rt);
+    build(1, 1, n);
+
+    /**
+     * 1: add(u, v, w)
+     * 2: sum(u, v)
+     * 3: update(1, id[u], id[u] + sz[u] -1, w)
+     * 4: get_sum(1, id[u], id[u] + sz[u] -1)
+     */
+}
+```
+
+
+
 
 
 ## 二、数据结构
