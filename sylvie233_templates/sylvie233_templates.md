@@ -850,6 +850,7 @@ int sum(int i) {
         res += bit[i];
         i -= i & -i;
     }
+    return res;
 }
 
 void add(int i, int v) {
