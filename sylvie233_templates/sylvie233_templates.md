@@ -366,6 +366,94 @@ void solve() {
 
 
 
+### 2-SAT
+
+```c++
+/**
+ * @brief 2-SAT
+ *  给每个布尔变量赋值，使得所有条件可以得到满足
+ *   数据范围：1~2n
+ * 
+ *      aVb = !a->b 且 !b->a
+ *      如果x的拓排序比!x的拓排序大（id[x]比id[!x]小）则x为真
+ */
+
+struct {
+    int v, next;
+} edge[N];
+int cnt, head[N];
+int top, flag, tot, sta[N], dfn[N], low[N], id[N];
+bool used[N];
+
+void add_edge(int u, int v) {
+    edge[cnt].v = v;
+    edge[cnt].next = head[u];
+    head[u] = cnt++;
+}
+
+void init() {
+    cnt = top = flag = tot = 0;
+    std::memset(head, -1, sizeof(head));
+    std::memset(dfn, 0, sizeof(dfn));
+    std::memset(used, 0, sizeof(used));
+}
+
+void tarjin(int u) {
+    dfn[u] = low[u] = ++flag;
+    used[u] = true;
+    sta[top++] = u;
+    for (int i = head[u]; i != -1; i = edge[i].next) {
+        int v = edge[i].v;
+        if (!dfn[v]) {
+            tarjin(v);
+            low[u] = std::min(low[u], low[v]);
+        } else if (used[v]) {
+            low[u] = std::min(low[u], dfn[v]);
+        }
+    }
+    if (dfn[u] == low[u]) {
+        tot++;
+        int t;
+        do {
+            t = sta[--top];
+            used[t] = false;
+            id[t] = tot;
+        } while(t != u);
+    }
+}
+
+void solve() {
+    int n, m; // 删除
+    init();
+    while (m--) {
+        int u1, v1, u2, v2;
+        add_edge(u1 + n * (v1 & 1), u2 + n * (v2 ^ 1)); // !a->b
+        add_edge(u2 + n * (v2 & 1), u1 + n * (v1 ^ 1)); // !b->a
+    }
+    for (int i = 1; i <= 2 * n; i++) {
+        if (!dfn[i]) {
+            tarjin(i);
+        }
+    }
+    bool f = true;
+    for (int i = 1; i <= n; i++) {
+        if (id[i] == id[i + n]) {
+            f = false;
+            break;
+        }
+    }
+    if (!f) {
+        std::cout << "Error\n"; 
+    } else {
+        for (int i = 1; i <= n; i++) {
+            std::cout << id[i] < id[i + n] << '\n';
+        }
+    }
+}
+```
+
+
+
 ### LCA
 
 ```c++
