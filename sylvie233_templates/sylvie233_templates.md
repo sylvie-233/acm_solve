@@ -705,6 +705,69 @@ void solve() {
 
 
 
+### 网络流
+
+#### 1.ek最大流
+
+```c++
+/**
+ * @brief EK最大流算法
+ *  数据范围：1~n
+ */
+int n, m, G[N][N], pre[N];
+bool used[N];
+
+bool bfs(int s, int t) {
+    std::memset(used, 0 , (n + 1) * sizeof(bool));
+    std::memset(pre, -1 , (n + 1) * sizeof(int));
+    std::queue<int> que;
+    pre[s] = s;
+    used[s] = true;
+    que.push(s);
+    while (!que.empty()) {
+        int u = que.front();
+        que.pop();
+        for (int i = 1; i <= n; i++) {
+            if (!used[i] && G[u][i] > 0) {
+                pre[i] = u;
+                used[i] = true;
+                if (i == t) {
+                    return true;
+                }
+                que.push(i);
+            }
+        }
+    }
+    return false;
+}
+
+int ek(int s, int t) {
+    int res = 0;
+    while (bfs(s, t)) {
+        int d = INF;
+        for (int i = t; i != s; i = pre[i]) {
+            d = std::min(d, G[pre[i]][i]);
+        }
+        for (int i = t; i != s; i = pre[i]) {
+            G[pre[i]][i] -= d;
+            G[i][pre[i]] += d;
+        }
+        res += d;
+    }
+    return res;
+}
+
+void solve() {
+    while (m--) {
+        int u, v, w;
+        G[u][v] += w;
+    }
+    int ans = ek(1, n);
+}
+```
+
+
+
 
 
 ## 二、数据结构
