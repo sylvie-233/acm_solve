@@ -1363,6 +1363,115 @@ ll qpow(ll a, ll b, ll mod) {
 
 
 
+### 素性测试、约数枚举、整数分解
+
+```c++
+/**
+ * @brief 素性测试、约数枚举、整数分解
+ * 
+ */
+
+// 素性测试
+bool pri(int n) {
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0) {
+            return false;
+        }
+    }
+    return n != 1;
+}
+
+// 约数枚举
+std::vector<int> divisor(int n) {
+    std::vector<int> vec;
+    for (int i = 1; i * i <= n; i++) {
+        if (n % i == 0) {
+            vec.push_back(i);
+            if (i != n / i) {
+                vec.push_back(n / i);
+            }
+        }
+    }
+    return vec;
+}
+
+// 整数分解
+std::map<int, int> decompose(int n) {
+    std::map<int, int> mp;
+    for (int i = 2; i * i <= n; i++) {
+        while (n % i == 0) {
+            mp[i]++;
+            n /= i;
+        }
+    }
+    if (n != 1) {
+        mp[n] = 1;
+    }
+    return mp;
+}
+```
+
+
+
+### 素数筛
+
+#### 埃氏筛
+
+```c++
+/**
+ * @brief 埃氏筛 
+ * 
+ */
+bool pri[N];
+
+void init() {
+    std::fill(pri, pri + N, true);
+    pri[0] = pri[1] = false;
+    for (int i = 2; i < N; i++) {
+        if (pri[i]) {
+            for(int j = 2 * i; j < N; j += i) {
+                pri[j] = false;
+            }
+        }
+    }
+}
+```
+
+
+
+#### 欧拉筛
+
+```c++
+/**
+ * @brief 欧拉筛
+ * 
+ */
+int d[N];
+bool pri[N];
+
+void init() {
+    int n = 1;
+    std::fill(pri, pri + N, true);
+    pri[0] = pri[1] = false;
+    for (int i = 2; i < N; i++) {
+        if (pri[i]) {
+            d[n++] = i;
+        }
+        for (int j = 1; j < n; j++) {
+            if (i * d[j] > N) {
+                break;
+            }
+            pri[i * d[j]] = false;
+            if (i % d[j] == 0) {
+                break;
+            }
+        }
+    }
+}
+```
+
+
+
 ### 欧几里得定理
 
 ```c++
@@ -2187,6 +2296,33 @@ for (int i = 0; i < n; i++) {
 
 
 ## 九、组合数学
+
+### 组合数
+
+#### 基础组合数
+
+```c++
+/**
+ * @brief 基础组合数 
+ *  C(n,m)= A(n,m)/m!=n!/(n-m)!/m!
+ */
+
+ll C(int n, int m) {
+    ll ans = 1;
+    if (m < n - m) {
+        m = n - m;
+    }
+    for (int i = m + 1; i <= n; i++) {
+        ans *= i;
+    }
+    for (int i = 1; i <= n - m; i++) {
+        ans /= i;
+    }
+    return ans;
+}
+```
+
+
 
 
 
