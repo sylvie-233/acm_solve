@@ -14,6 +14,42 @@
 
 ## 基础工具
 
+### 快速相乘
+
+```c++
+
+/**
+ * @brief 快速相乘
+ * 
+ */
+
+ll qmul(ll a, ll b) {
+    ll ans = 0;
+    while (b) {
+        if (b & 1) {
+            ans += a;
+        }
+        a += a;
+        b >>= 1;
+    }
+    return ans;
+}
+
+ll qmul(ll a, ll b, ll mod) {
+    ll ans = 0;
+    while (b) {
+        if (b & 1) {
+            ans = (ans + a) % mod;
+        }
+        a = (a + a) % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+```
+
+
+
 
 
 ## 一、图论
@@ -1513,6 +1549,36 @@ int exgcd(int a, int b, int& x, int& y) {
 
 
 
+### 同余方程
+
+#### 一元线性同余方程
+
+```c++
+
+/**
+ * @brief 一元线性同余方程
+ *  Xa 恒等于 b(mod m)
+ *  求X
+ *      ax + my = b 
+ *      d = gcd(a, m)
+ *      (a/d)x + (m/d)y = b/d
+ *      (a/d)x + (m/d)y = 1 => ax + my = d 即扩展欧几里得
+ *      X = x0 * (b/d) % (m/d)    
+ */
+
+ll f(ll a, ll b, ll m) {
+    ll x, y, d;
+    d = exgcd(a, m, x, y);
+    if (b % d) {
+        return -1;
+    }
+    x = x * (b / d) % (m / d);
+    return (x % (m / d) + (m / d)) % (m / d);
+}
+```
+
+
+
 
 
 ## 四、字符串
@@ -2287,6 +2353,32 @@ for (int i = 0; i < n; i++) {
             dp[i] = std::max(d[i], dp[j] + 1);
         }
         res = std::max(res, dp[i]);
+    }
+}
+```
+
+
+
+### 划分数
+
+```c++
+/**
+ * @brief 划分数（j的i划分数） 
+ *  把n划分为不超过m份的划分数
+ * 
+ */
+int dp[N][N];
+
+void solve() {
+    dp[0][0] = 1;
+    for (int i = 1; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (j >= i) {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - i];
+            } else {
+                dp[i][j] = dp[i - 1][j];
+            }
+        }
     }
 }
 ```
