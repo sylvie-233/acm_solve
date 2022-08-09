@@ -1620,6 +1620,82 @@ int manacher(std::string s) {
 
 
 
+### 字符串Hash
+
+```c++
+/**
+ * @brief 单Hash
+ * 
+ */
+
+const ull b = 131, mod = 1e9 + 7;
+ull d[N];
+
+ull hashs(std::string s) {
+    ull res = 0;
+    for (int i = 0; i < s.length(); i++) {
+        res = (res * b + (ull)s[i]) % mod;
+    }
+    return res;
+}
+
+void solve() {
+    int n;
+    std::string s;
+    for (int i = 1; i <= n; i++) {
+        d[i] = hashs(s);
+    }
+    std::sort(d + 1, d + 1 + n);
+    int ans = 0;
+    for (int i = 1; i <= n; i++) {
+        if (d[i] != d[i - 1]) {
+            ans++;
+        }
+    }
+}
+
+/**
+ * @brief 双Hash
+ * 
+ */
+struct node {
+    ull x, y;
+    bool operator<(const node &b) const {
+        if (b.x != x) {
+            return x < b.x;
+        }
+        return y < b.y;
+    }
+} d[N];
+const ull b = 131, mod1 = 1e9 + 7, mod2 = 1e9 + 9;
+
+ull hashs(std::string s, ull mod) {
+    ull res = 0;
+    for (int i = 0; i < s.length(); i++) {
+        res = (res * b + (ull)s[i]) % mod;
+    }
+    return res;
+}
+
+void solve() {
+    int n;
+    std::string s;
+    for (int i = 1; i <= n; i++) {
+        d[i].x = hashs(s, mod1);
+        d[i].y = hashs(s, mod2);
+    }
+    std::sort(d + 1, d + 1 + n);
+    int ans = 0;
+    for (int i = 1; i <= n; i++) {
+        if (d[i].x != d[i - 1].x || d[i].y != d[i - 1].y) {
+            ans++;
+        }
+    }
+}
+```
+
+
+
 ### 普通kmp
 
 ```c++
