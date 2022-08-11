@@ -1579,6 +1579,28 @@ ll f(ll a, ll b, ll m) {
 
 
 
+#### 中国剩余定理
+
+```c++
+/**
+ * @brief 中国剩余定理
+ *  a 恒等于 ai(mod ni)，ni之间互质，求a的最小通解
+ */
+
+ll f_china(int *a, int *n, int len) {
+    ll num = 1, ans = 0, x, y;
+    for (int i = 0; i < len; i++) {
+        num *= n[i];
+    }
+    for (int i = 0; i < len; i++) {
+        ll m = num / n[i];
+        exgcd(m, n[i], x, y);
+        ans = (ans + ((ll)1) * a[i] * m * x % num) % num;
+    }
+    return (ans % num + num) % num;
+}
+```
+
 
 
 ## 四、字符串
