@@ -1646,74 +1646,45 @@ int manacher(std::string s) {
 
 ```c++
 /**
- * @brief 单Hash
- * 
+ * @brief Hash
+ * 二维hash（一维字符串hash，在区间hash值上再hash长度为m的区间）
+ * 	：区间字符串的比较
  */
 
-const ull b = 131, mod = 1e9 + 7;
-ull d[N];
+const ull b = 131, x = 173, mod = 17111354211743357;
 
 ull hashs(std::string s) {
     ull res = 0;
     for (int i = 0; i < s.length(); i++) {
-        res = (res * b + (ull)s[i]) % mod;
+        res = (res * b % mod + (s[i] - 'a' + 1)) % mod;
     }
     return res;
 }
 
-void solve() {
-    int n;
-    std::string s;
-    for (int i = 1; i <= n; i++) {
-        d[i] = hashs(s);
-    }
-    std::sort(d + 1, d + 1 + n);
-    int ans = 0;
-    for (int i = 1; i <= n; i++) {
-        if (d[i] != d[i - 1]) {
-            ans++;
-        }
-    }
-}
-
-/**
- * @brief 双Hash
- * 
- */
-struct node {
-    ull x, y;
-    bool operator<(const node &b) const {
-        if (b.x != x) {
-            return x < b.x;
-        }
-        return y < b.y;
-    }
-} d[N];
-const ull b = 131, mod1 = 1e9 + 7, mod2 = 1e9 + 9;
-
-ull hashs(std::string s, ull mod) {
-    ull res = 0;
+ull hashs2(std::string s) {
+    ull res = 131;
     for (int i = 0; i < s.length(); i++) {
-        res = (res * b + (ull)s[i]) % mod;
+        res = ((res * x % mod)+ (s[i] - 'a' + 1)) % mod;
     }
     return res;
 }
 
-void solve() {
-    int n;
-    std::string s;
-    for (int i = 1; i <= n; i++) {
-        d[i].x = hashs(s, mod1);
-        d[i].y = hashs(s, mod2);
-    }
-    std::sort(d + 1, d + 1 + n);
-    int ans = 0;
-    for (int i = 1; i <= n; i++) {
-        if (d[i].x != d[i - 1].x || d[i].y != d[i - 1].y) {
-            ans++;
-        }
-    }
+for (int i = 1; i <= n; i++) {
+    d_hash[i] = hashs(s[i]);
+    d_hash2[i] = hashs2(s[i]);
 }
+
+ull sum = 0;
+for (int j = 1; j <= m; j++) {
+    sum = ((sum * x % mod )+ d_hash[j]) % mod;
+}
+ull sum2 = 0;
+for (int j = 1; j <= m; j++) {
+    sum2 = ((sum2 * b) % mod + d_hash2[j]) % mod;
+}
+
+// s[1 ~ m]区间字符串的最终hash值
+ull ans_hash = (sum + sum2) % mod;
 ```
 
 
