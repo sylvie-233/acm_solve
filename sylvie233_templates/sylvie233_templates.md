@@ -1664,7 +1664,7 @@ ull hashs(std::string s) {
 ull hashs2(std::string s) {
     ull res = 131;
     for (int i = 0; i < s.length(); i++) {
-        res = ((res * x % mod)+ (s[i] - 'a' + 1)) % mod;
+        res = (res * x % mod+ (s[i] - 'a' + 1)) % mod;
     }
     return res;
 }
@@ -1676,11 +1676,11 @@ for (int i = 1; i <= n; i++) {
 
 ull sum = 0;
 for (int j = 1; j <= m; j++) {
-    sum = ((sum * x % mod )+ d_hash[j]) % mod;
+    sum = (sum * x % mod + d_hash[j]) % mod;
 }
 ull sum2 = 0;
 for (int j = 1; j <= m; j++) {
-    sum2 = ((sum2 * b) % mod + d_hash2[j]) % mod;
+    sum2 = (sum2 * b % mod + d_hash2[j]) % mod;
 }
 
 // s[1 ~ m]区间字符串的最终hash值
@@ -2488,3 +2488,29 @@ ll C(int n, int m) {
 
 
 ## 十、计算几何
+
+### 多边形面积
+
+```c++
+/**
+ * @brief 多边形面积（逆时针）
+ *  S=1/2|x1y2-x2y1|
+ */
+
+struct node {
+    double x, y;
+} d[N];
+
+double cross(node t1, node t2) {
+    return (t1.x - d[0].x) * (t2.y - d[0].y) - (t2.x - d[0].x) * (t1.y - d[0].y);
+}
+
+void solve() {
+    double ans = 0;
+    for (int i = 1; i < n - 1; i++) {
+        ans += cross(d[i], d[i + 1]);
+    }
+    ans /= 2;
+}
+```
+
