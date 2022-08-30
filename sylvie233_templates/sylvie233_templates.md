@@ -1563,6 +1563,154 @@ int main() {
 
 
 
+#### 文艺平衡树
+
+```c++
+/**
+ * @brief 文艺平衡树
+ * 您需要写一种数据结构（可参考题目标题），来维护一个有序数列。
+ * 其中需要提供以下操作：翻转一个区间，例如原有序序列是 5 4 3 2 1，翻转区间是 [2,4]的话，结果是5 2 3 4 1。
+ *
+ * 输入格式
+ * 第一行两个正整数 n,m，表示序列长度与操作个数。序列中第 i 项初始为 i。
+ * 接下来 m 行，每行两个正整数 l,r，表示翻转的区间。
+ *
+ * 输出格式
+ * 输出一行 n个正整数，表示原始序列经过 m次变换后的结果。
+ */
+
+struct node {
+    int s[2], p, v, size, tag;
+    void init(int p1, int v1) {
+        p = p1;
+        v = v1;
+        size = 1;
+    }
+} tr[N];
+
+// 根节点序号，当前序号
+int root, idx;
+int n, m;
+
+// 更新当前子树size
+void pushup(int x) {
+    tr[x].size = tr[tr[x].s[0]].size + tr[tr[x].s[1]].size + 1;
+}
+
+// x、y左旋或右旋
+void rotate(int x) {
+    int y = tr[x].p, z = tr[y].p;
+    int k = tr[y].s[1] == x;
+    // 更新x子节点
+    tr[y].s[k] = tr[x].s[k ^ 1];
+    tr[tr[x].s[k ^ 1]].p = y;
+    // 更新y父节点
+    tr[x].s[k ^ 1] = y;
+    tr[y].p = x;
+    // 更新x父节点
+    tr[z].s[tr[z].s[1] == y] = x;
+    tr[x].p = z;
+    pushup(y);
+    pushup(x);
+}
+
+/**
+ * @brief 
+ *  1. k>0时，把x旋转到k下面
+ *  2. k=0时，把x旋转到根
+ */
+void splay(int x, int k) {
+    while (tr[x].p != k) {
+        int y = tr[x].p, z = tr[y].p;
+        if (z != k) {
+            ((tr[y].s[0] == x) ^ (tr[z].s[0] == y)) ? rotate(x) : rotate(y);
+        }
+        rotate(x);
+    }
+    if (k == 0) {
+        root = x;
+    }
+}
+
+// 插入v
+void insert(int v) {
+    int x = root, p = 0;
+    while (x && tr[x].v != v) {
+        p = x;
+        x = tr[x].s[v > tr[x].v];
+    }
+    x = ++idx;
+    tr[p].s[v > tr[p].v] = x;
+    tr[x].init(p, v);
+    splay(x, 0);
+}
+
+// 下传（左右子节点交互（旋转操作））
+void pushdown(int x) {
+    if (tr[x].tag) {
+        std::swap(tr[x].s[0], tr[x].s[1]);
+        tr[tr[x].s[0]].tag ^= 1;
+        tr[tr[x].s[1]].tag ^= 1;
+        tr[x].tag = 0;
+    }
+}
+
+// 返回第k个节点编号
+int get_k(int k) {
+    int x = root;
+    while (true) {
+        pushdown(x);
+        int y = tr[x].s[0];
+        if (tr[y].size + 1 < k) {
+            k -= tr[y].size + 1;
+            x = tr[x].s[1];
+        } else if (tr[y].size >= k) {
+            x = y;
+        } else {
+            return x;
+        }
+    }
+}
+
+// 中序遍历输出
+void output(int x) {
+    pushdown(x);
+    if (tr[x].s[0]) {
+        output(tr[x].s[0]);
+    }
+    if (tr[x].v >= 1 && tr[x].v <= n) {
+        std::cout << tr[x].v << ' ';
+    }
+    if (tr[x].s[1]) {
+        output(tr[x].s[1]);
+    }
+}
+int main() {
+    // 哨兵
+    insert(-1e9);
+    insert(1e9);
+
+    std::cin >> n >> m;
+    for (int i = 1; i <= n; i++) {
+        insert(i);
+    }
+    while (m--) {
+        int l, r;
+        std::cin >> l >> r;
+        // [l-1, r+1] 
+        l = get_k(l);
+        r = get_k(r + 2);
+        splay(l, 0);
+        splay(r, l);
+        tr[tr[r].s[0]].tag ^= 1;
+    }
+    output(root);
+    return 0;
+}
+```
+
+
+
 
 
 ## 三、数论
