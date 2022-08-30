@@ -1362,6 +1362,207 @@ void update(int v, int l, int r, int rt) {
 
 
 
+### 平衡树
+
+#### 普通平衡树Splay
+
+```c++
+/**
+ * @brief 普通平衡树Splay
+ * 
+ *  1.插入 xx 数
+ *  2.删除 xx 数(若有多个相同的数，因只删除一个)
+ *  3.查询 xx 数的排名(排名定义为比当前数小的数的个数 +1 )
+ *  4.查询排名为 xx 的数
+ *  5.求 xx 的前驱(前驱定义为小于 xx，且最大的数)
+ *  6.求 xx 的后继(后继定义为大于 xx，且最小的数)
+ * 
+ *  节点序号为0则为空
+ */
+
+struct node {
+    int s[2], p, v, cnt, size;
+    void init(int p1, int v1) {
+        p = p1;
+        v = v1;
+        cnt = size = 1;
+    }
+} tr[N];
+
+// 根节点序号，当前序号
+int root, idx;
+
+// 更新当前子树size
+void pushup(int x) {
+    tr[x].size = tr[tr[x].s[0]].size + tr[tr[x].s[1]].size + tr[x].cnt;
+}
+
+// x、y左旋或右旋
+void rotate(int x) {
+    int y = tr[x].p, z = tr[y].p;
+    int k = tr[y].s[1] == x;
+    // 更新x子节点
+    tr[y].s[k] = tr[x].s[k ^ 1];
+    tr[tr[x].s[k ^ 1]].p = y;
+    // 更新y父节点
+    tr[x].s[k ^ 1] = y;
+    tr[y].p = x;
+    // 更新x父节点
+    tr[z].s[tr[z].s[1] == y] = x;
+    tr[x].p = z;
+    pushup(y);
+    pushup(x);
+}
+
+/**
+ * @brief 
+ *  1. k>0时，把x旋转到k下面
+ *  2. k=0时，把x旋转到根
+ */
+void splay(int x, int k) {
+    while (tr[x].p != k) {
+        int y = tr[x].p, z = tr[y].p;
+        if (z != k) {
+            ((tr[y].s[0] == x) ^ (tr[z].s[0] == y)) ? rotate(x) : rotate(y);
+        }
+        rotate(x);
+    }
+    if (k == 0) {
+        root = x;
+    }
+}
+
+// 找到v所在节点，并把该节点转到根
+void find(int v) {
+    int x = root;
+    while (tr[x].s[v > tr[x].v] && v != tr[x].v) {
+        x = tr[x].s[v > tr[x].v];
+    }
+    splay(x, 0);
+}
+
+// 求v的前驱，返回其节点序号
+int get_pre(int v) {
+    find(v);
+    int x = root;
+    if (tr[x].v < v) {
+        return x;
+    }
+    x = tr[x].s[0];
+    while (tr[x].s[1]) {
+        x = tr[x].s[1];
+    }
+    return x;
+}
+
+// 求v的后继，返回其节点序号
+int get_suc(int v) {
+    find(v);
+    int x = root;
+    if (tr[x].v > v) {
+        return x;
+    }
+    x = tr[x].s[1];
+    while (tr[x].s[0]) {
+        x = tr[x].s[0];
+    }
+    return x;
+}
+
+// 删除v（若有多个相同的数，只删除一个）
+void del(int v) {
+    int pre = get_pre(v);
+    int suc = get_suc(v);
+    splay(pre, 0);
+    splay(suc, pre);
+    int del = tr[suc].s[0];
+    if (tr[del].cnt > 1) {
+        tr[del].cnt--;
+        splay(del, 0);
+    } else {
+        tr[suc].s[0] = 0;
+        splay(suc, 0);
+    }
+}
+
+// 查询v数的排名
+int get_rank(int v) {
+    find(v);
+    return tr[tr[root].s[0]].size;
+}
+
+// 查询排名为k的数值
+int get_val(int k) {
+    int x = root;
+    while (true) {
+        int y = tr[x].s[0];
+        if (tr[y].size + tr[x].cnt < k) {
+            k -= tr[y].size + tr[x].cnt;
+            x = tr[x].s[1];
+        } else {
+            if (tr[y].size >= k) {
+                x = tr[x].s[0];
+            } else {
+                break;
+            }
+        }
+    }
+    splay(x, 0);
+    return tr[x].v;
+}
+
+// 插入v
+void insert(int v) {
+    int x = root, p = 0;
+    while (x && tr[x].v != v) {
+        p = x;
+        x = tr[x].s[v > tr[x].v];
+    }
+    if (x) {
+        tr[x].cnt++;
+    } else {
+        x = ++idx;
+        tr[p].s[v > tr[p].v] = x;
+        tr[x].init(p, v);
+    }
+    splay(x, 0);
+}
+
+int main() {
+    // 哨兵
+    insert(-1e9);
+    insert(1e9);
+
+    std::cin >> n;
+    while (n--) {
+        int op, x;
+        std::cin >> op >> x;
+        switch (op) {
+            case 1:
+                insert(x);
+                break;
+            case 2:
+                del(x);
+                break;
+            case 3:
+                std::cout << get_rank(x) << '\n';
+                break;
+            case 4:
+                std::cout << get_val(x + 1) << '\n';
+                break;
+            case 5:
+                std::cout << tr[get_pre(x)].v << '\n';
+                break;
+            case 6:
+                std::cout << tr[get_suc(x)].v << '\n';
+        }
+    }
+    return 0;
+}
+```
+
+
+
 
 
 ## 三、数论
