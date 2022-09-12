@@ -1711,6 +1711,137 @@ int main() {
 
 
 
+### 普通平衡树 FHQ Treap
+
+```c++
+/**
+ * @brief 普通平衡树 FHQ Treap
+ * 使用分裂合并来维护树的平衡
+ */
+
+struct node {
+    int l, r;
+    int val;
+    int key; //堆的随机值（小顶堆）
+    int size;
+} tr[N];
+
+// 根节点序号，当前序号
+int n, root, idx;
+
+int new_node(int v) {
+    tr[++idx].val = v;
+    tr[idx].key = rand(); // 堆分配随机值
+    tr[idx].size = 1;
+    return idx;
+}
+
+// 更新当前子树size
+void pushup(int p) {
+    tr[p].size = tr[tr[p].l].size + tr[tr[p].r].size + 1;
+}
+
+// 分裂，根据v值分裂成两棵子树，x为左子树的根（val<=v），y为右子树的根（val>v）
+void split(int p, int v, int &x, int &y) {
+    if (!p) {
+        x = y = 0;
+        return;
+    }
+    if (tr[p].val <= v) {
+        x = p;
+        split(tr[x].r, v, tr[x].r, y);
+    } else {
+        y = p;
+        split(tr[y].l, v, x, tr[y].l);
+    }
+    pushup(p);
+}
+
+// 合并，左右子树
+int merge(int x, int y) {
+    if (!x || !y) {
+        return x + y;
+    }
+    if (tr[x].key < tr[y].key) {
+        tr[x].r = merge(tr[x].r, y);
+        pushup(x);
+        return x;
+    } else {
+        tr[y].l = merge(x, tr[y].l);
+        pushup(y);
+        return y;
+    }
+}
+
+// 插入v
+void insert(int v) {
+    int x, y, z;
+    split(root, v, x, y);
+    z = new_node(v);
+    root = merge(merge(x, z), y);
+}
+
+// 删除
+void del(int v) {
+    int x, y, z;
+    split(root, v, x, z);
+    split(x, v - 1, x, y);
+    y = merge(tr[y].l, tr[y].r);
+    root = merge(merge(x, y), z);
+}
+
+// 返回第k个节点编号
+int get_k(int p, int k) {
+    if (k <= tr[tr[p].l].size) {
+        return get_k(tr[p].l, k);
+    }
+    if (k == tr[tr[p].l].size + 1) {
+        return p;
+    }
+    return get_k(tr[p].r, k - tr[tr[p].l].size - 1);
+}
+
+// 前驱
+int get_pre(int v) {
+    int x, y;
+    split(root, v - 1, x, y);
+    int p = get_k(x, tr[x].size);
+    int res = tr[p].val;
+    root = merge(x, y);
+    return res;
+}
+
+// 后继
+int get_suc(int v) {
+    int x, y;
+    split(root, v, x, y);
+    int p = get_k(y, 1);
+    int res = tr[p].val;
+    root = merge(x, y);
+    return res;
+}
+
+// 排名
+int get_rank(int v) {
+    int x, y;
+    split(root, v - 1, x, y);
+    int res = tr[x].size + 1;
+    root = merge(x, y);
+    return res;
+}
+
+// 数值
+void get_val(int k) {
+    int p = get_k(root, k);
+    return tr[p].val;
+}
+
+void solve() {
+}
+```
+
+
+
 
 
 ## 三、数论
