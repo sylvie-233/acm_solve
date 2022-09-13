@@ -1711,7 +1711,7 @@ int main() {
 
 
 
-### 普通平衡树 FHQ Treap
+#### 普通平衡树 FHQ Treap
 
 ```c++
 /**
@@ -1831,12 +1831,123 @@ int get_rank(int v) {
 }
 
 // 数值
-void get_val(int k) {
+int get_val(int k) {
     int p = get_k(root, k);
     return tr[p].val;
 }
 
 void solve() {
+}
+```
+
+
+
+#### 文艺平衡树 FHQ Treap
+
+```c++
+/**
+ * @brief 文艺平衡树 FHQ Treap
+ * 使用分裂合并来维护树的平衡
+ */
+
+struct node {
+    int l, r;
+    int val;
+    int key; //堆的随机值（小顶堆）
+    int size;
+    int tag; // 交换懒标记
+} tr[N];
+
+// 根节点序号，当前序号
+int n, m, root, idx;
+
+int new_node(int v) {
+    tr[++idx].val = v;
+    tr[idx].key = rand(); // 堆分配随机值
+    tr[idx].size = 1;
+    return idx;
+}
+
+// 更新当前子树size
+void pushup(int p) {
+    tr[p].size = tr[tr[p].l].size + tr[tr[p].r].size + 1;
+}
+
+// 下传（更新懒标记、交换）
+void pushdown(int p) {
+    if (!tr[p].tag) {
+        return;
+    }
+    std::swap(tr[p].l, tr[p].r);
+    tr[tr[p].l].tag ^= 1;
+    tr[tr[p].r].tag ^= 1;
+    tr[p].tag = 0;
+}
+
+// 分裂，根据v值分裂成两棵子树，x为左子树的根（val<=v），y为右子树的根（val>v）
+// 排名为左子树的大小
+void split(int p, int k, int &x, int &y) {
+    if (!p) {
+        x = y = 0;
+        return;
+    }
+    // 获取子节点之前先进行旋转操作
+    pushdown(p);
+    if (k > tr[tr[p].l].size) {
+        k -= tr[tr[p].l].size + 1;
+        x = p;
+        split(tr[x].r, k, tr[x].r, y);
+    } else {
+        y = p;
+        split(tr[y].l, k, x, tr[y].l);
+    }
+    pushup(p);
+}
+
+// 合并，左右子树
+int merge(int x, int y) {
+    if (!x || !y) {
+        return x + y;
+    }
+    if (tr[x].key < tr[y].key) {
+        pushdown(x);
+        tr[x].r = merge(tr[x].r, y);
+        pushup(x);
+        return x;
+    } else {
+        pushdown(y);
+        tr[y].l = merge(x, tr[y].l);
+        pushup(y);
+        return y;
+    }
+}
+
+// 中序遍历输出
+void output(int p) {
+    if (!p) {
+        return;
+    }
+    pushdown(p);
+    output(tr[p].l);
+    std::cout << tr[p].val << " ";
+    output(tr[p].r);
+}
+
+int main() {
+    std::cin >> n >> m;
+    for (int i = 1; i <= n; i++) {
+        root = merge(root, new_node(i));
+    }
+    while (m--) {
+        int l, r, x, y, z;
+        std::cin >> l >> r;
+        split(root, r, x, z);
+        split(x, l - 1, x, y);
+        tr[y].tag ^= 1;
+        root = merge(merge(x, y), z);
+    }
+    output(root);
+    return 0;
 }
 ```
 
