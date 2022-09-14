@@ -1953,6 +1953,222 @@ int main() {
 
 
 
+### 动态树 LCT
+
+```c++
+/**
+ * @brief 动态树 （LCT）
+ * 给定 n 个点以及每个点的权值，要你处理接下来的 m 个操作。
+ * 操作有四种，操作从 0 到 3 编号。点从 1 到 n 编号。
+ *
+ * 0 x y 代表询问从 x 到 y 的路径上的点的权值的 xor 和。保证 x 到 y 是联通的。
+ * 1 x y 代表连接 x 到 y，若 x 到 y 已经联通则无需连接。
+ * 2 x y 代表删除边 (x,y)，不保证边 (x,y) 存在。
+ * 3 x y 代表将点 x 上的权值变成 y。
+ * 
+ * 实链剖分：把树拆分成若干条实链，用splay来维护实链，通过对实链的拆分和组合构造答案
+ *  一个节点只能选一个儿子做实儿子，其他都是虚儿子
+ *    1.实边：父节点与实儿子之间的双相边
+ *    2.虚边：由虚儿子指向父节点的边（单向）
+ *    3.实链：由实边构成的链。（每条实链的节点深度是严格递增的）
+ * 
+ * 辅助树：由若干splay构成，与原树等价（每条实链用一个splay维护，中序遍历按深度严格递增）
+ *    1.区分树根和splay的根
+ *    2.虚边从下面splay的根指向上面splay中的父亲（原树实链中根的父亲）
+ *    3.实边和虚边是动态变化的
+ * 
+ * 
+ * 一些辅助树构成了LCT，其维护的是整个森林
+ * 
+ * 
+ * 辅助树中实链的中序遍历为原树中的实链从上至下遍历
+ * 原树+辅助树
+ * 单节点也算一个辅助树
+ * 实链之间用虚边相连
+ */
+
+#define fa(x) tr[x].p
+#define lc(x) tr[x].s[0]
+#define rc(x) tr[x].s[1]
+#define notroot(x) lc(fa(x))==x||rc(fa(x))==x
+
+struct node{
+  int s[2], p, v;
+  int sum; // 仅记录实链上的子树和
+  int tag; // 翻转懒标记
+}tr[N];
+
+int n, m;
+
+// 更新实链上的和
+void pushup(int x) {
+    tr[x].sum = tr[lc(x)].sum ^ tr[x].v ^ tr[rc(x)].sum;
+}
+
+void pushdown(int x) {
+    if (tr[x].tag) {
+        std::swap(lc(x), rc(x));
+        tr[lc(x)].tag ^= 1;
+        tr[rc(x)].tag ^= 1;
+        tr[x].tag = 0;
+    }
+}
+
+// x与父节点旋转交换
+void rotate(int x) {
+    int y = fa(x), z = fa(y);
+    int k = rc(y) == x;
+    // 加notroot判断：维持旋转后两个splay之间的虚边性质
+    // （x，z）连边放在上面：否则会破坏notroot(y)判断
+    if (notroot(y)) {
+        tr[z].s[rc(z) == y] = x;
+    }
+    fa(x) = z;
+
+    tr[y].s[k] = tr[x].s[k ^ 1];
+    fa(tr[x].s[k ^ 1]) = y;
+
+    tr[x].s[k ^ 1] = y;
+    fa(y) = x;
+
+    pushup(y);
+    pushup(x);
+}
+
+// 找到根，旋转x到根之间的路径
+void pushall(int x) {
+    if (notroot(x)) {
+        pushall(fa(x));
+    }
+    pushdown(x);
+}
+
+// x旋转到根（在维持虚边性质的前提下）
+// x仅在一棵小的splay树上旋转
+void splay(int x) {
+    pushall(x);
+    while (notroot(x)) {
+        int y = fa(x), z = fa(y);
+        if(notroot(y)) {
+           (rc(y) == x) ^ (rc(z) == y) ? rotate(x) : rotate(y);
+        }
+        rotate(x);
+    }
+}
+
+// 打通从x到原树树根的路径，并把路径变成一条实链
+/**
+ *  1.把当前点转到当前splay的根
+ *  2.把当前点的右儿子换成之前的节点（上一个splay的根）
+ *  3.更新当前点的信息
+ *  4.把当前点换成当前点的父亲，循环操作
+ * 
+ * 
+ *  完成实链的拆分和重组，把不在路径上的点踢出去，把路径上虚边变实边
+ * 
+ *  access后的辅助树的实边的中序遍历正是原树上从树根到x的路径
+ */
+void access(int x) {
+    for (int y = 0; x;) {
+        splay(x);
+        rc(x) = y;
+        pushup(x);
+        y = x;
+        x = fa(x);
+    }
+}
+
+/**
+ * @brief 换根：把x变为原树树根，让x变成深度最小的根
+ *  换根 = 通路 + 伸展 + 翻转
+ */
+void makeroot(int x) {
+    access(x);
+    splay(x);
+    tr[x].tag ^= 1;
+}
+
+// split分离路径为算法的核心
+/**
+ * @brief 把从x到y的路径分离出来，把路径变为一条实链，根为y
+ * 
+ * @param x 
+ * @param y 
+ */
+void split(int x, int y) {
+    makeroot(x);
+    access(y);
+    splay(y);
+}
+
+int output(int x, int y) {
+    split(x, y);
+    return tr[y].sum;
+}
+
+/**
+ * @brief 把树根找出来，并转到根（中序遍历第一个点）
+ *  从x开始
+ * 
+ */
+int findroot(int x) {
+    access(x);
+    splay(x);
+    while (lc(x)) {
+        pushdown(x);
+        x = lc(x);
+    }
+    splay(x); // 防止卡链
+    return x;
+}
+
+void link(int x, int y) {
+    makeroot(x);
+    if (findroot(y) != x) {
+        fa(x) = y;
+    }
+}
+
+/**
+ * @brief x和y在同一棵子树上，且y是x的后继节点
+ * 
+ * @param x 
+ * @param y 
+ */
+void cut(int x, int y) {
+    makeroot(x);
+    if (findroot(y) == x
+        && fa(y) == x && !lc(y)) {
+            rc(x) = fa(y) = 0;
+            pushup(x);
+        }
+}
+
+void change(int x, int y) {
+    splay(x);
+    tr[x].v = y;
+    pushup(x);
+}
+
+int main(){
+    std::cin >> n >> m;
+    for(int i=1; i<=n; i++) {
+        std::cin >> tr[i].v;
+    }
+    while(m--){
+        int t, x, y;
+        std::cin >> t >> x >> y;
+        if(t == 0) std::cout << output(x, y) << '\n';
+        else if(t == 1) link(x, y);
+        else if(t == 2) cut(x, y);
+        else change(x, y);
+    }
+    return 0;
+}
+```
+
+
+
 
 
 ## 三、数论
