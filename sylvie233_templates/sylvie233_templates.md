@@ -804,6 +804,166 @@ void solve() {
 
 
 
+### 静态仙人掌
+
+```c++
+/**
+ * @brief 静态仙人掌
+ *  无向仙人掌图：任意一条边至多只出现在一条简单回路的无向连通图
+ * 
+ *  问题：给一个有n个点和m条边的仙人掌图，和q组询问，每次询问两个点u，v之间的最短路
+ */
+
+/**
+ * @brief 圆方树：一种将图变成树的方法
+ *  规则：
+ *      1.对于每个环，在环心建一个方点，让环上一个割点做环的根，从割点向方点连一条权值为0的边，从方点向其它原点连一条权值为s的边，s是圆点到割点的最短路，这个方点与环上其它圆点连成菊花图
+ *      2.对于不在环上的两个圆点，保留原图中的边权
+ *      （利用tarjin完成图的转化）
+ * 
+ * 问题从图上的最短路转化为树上的最短路，利用倍增法（设p=lca（u，v））
+ *      1.若p为圆点，则d(u,v)=d[u]+d[v]-2*d[p]
+ *      2.若p为方点，则需要找出o在环上的两个儿子A，B，分别为u和v的祖先
+ *          d(u,v)=d(A,B)+d(A,u)+d(B,v)
+ *          d(A,B)可以利用环长（单向）求解，len=abs(s[A]-s[B])，d(A,B)=min(len, sc[A]-len)。其中是s[A]是A到割点的环长（单向，区分于d值），sc[A]是A所在环的总长度。
+ *          d(A,u)=d[u]-d[A],d(B,v)=d[v]-d[B]
+ * 
+ */
+
+struct edge {
+    int v, w, ne;
+} e[M];
+
+int n, m, q;
+
+int h1[N], h2[N], idx = 1;
+int dfn[N], low[N], tim;
+int s[N], sc[N], fa[N], fw[N], fe[N], cn;
+int f[N][14], dep[N], d[N];
+
+int A, B;
+
+void add(int *h, int u, int v, int w) {
+    e[++idx] = {v, w, h[u]};
+    h[u] = idx;
+}
+
+// lca构建
+void dfs(int u, int father) {
+    dep[u] = dep[father] + 1;
+    f[u][0] = father;
+    for (int k = 1; k <= 13; k++) {
+        f[u][k] = f[f[u][k - 1]][k - 1];
+    }
+    for (int i = h2[u]; i; i = e[i].ne) {
+        int v = e[i].v, w = e[i].w;
+        d[v] = d[u] + w;
+        dfs(v, u);
+    }
+}
+
+int lca(int u, int v) {
+    if (dep[u] < dep[v]) {
+        std::swap(u, v);
+    }
+    for (int k = 13; k >= 0; k--) {
+        if (dep[f[u][k]] >= dep[v]) {
+            u = f[u][k];
+        }
+    }
+    if (u == v) {
+        return u;
+    }
+    for (int k = 13; k >= 0; k--) {
+        if (f[u][k] != f[v][k]) {
+            u = f[u][k];
+            v = f[v][k];
+        }
+    }
+    // 存lca的两个儿子
+    A = u;
+    B = v;
+    return f[u][0];
+}
+
+void build_tree(int u, int v, int w) {
+    int sum = w;
+    for (int k = v; k != u; k = fa[k]) {
+        s[k] = sum;
+        sum += fw[k]; // 单向环长前缀和
+    }
+    s[u] = sc[u] = sum;
+    // 割点加0边
+    add(h2, u, ++cn, 0);
+    for (int k = v; k != u; k = fa[k]) {
+        sc[k] = sum;
+        // 构建菊花图，长度为割点的最短路（环总长-单向环长）
+        add(h2, cn, k, std::min(s[k], sum - s[k]));
+    }
+}
+
+void tarjan(int u, int ine) {
+    dfn[u] = low[u] = ++tim;
+    for (int i = h1[u]; i; i = e[i].ne) {
+        int v = e[i].v, w = e[i].w;
+        if (!dfn[v]) {
+            fa[v] = u;
+            fw[v] = w;
+            fe[v] = i;
+            tarjan(v, i);
+            low[u] = std::min(low[u], low[v]);
+            if (dfn[u] < low[v]) {
+                // 非环边，直接加边（环边low[v]<=dnf[u]）
+                add(h2, u, v, w);
+            }
+        } else if (i != (ine ^ 1)) {
+            // 不是同一边的双向（边数邻近+1）
+            low[u] = std::min(low[u], dfn[v]);
+        }
+    }
+    for (int i = h1[u]; i ; i = e[i].ne) {
+        int v = e[i].v, w = e[i].w;
+        // tarjin判环成功
+        if (dfn[u] < dfn[v] && fe[v] != i) {
+            build_tree(u, v, w);
+        }
+    }
+}
+
+int main(){
+    std::cin >> n >> m >> q;
+    cn = n;
+    while(m--){
+        int a, b, c;
+        std::cin >> a >> b >> c;
+        // 无向变有向
+        add(h1, a, b, c);
+        add(h1, b, a, c);
+    }
+    tarjan(1, -1); //找环建树
+    dfs(1, 0); //lca打表
+    while(q--){
+        int u, v;
+        std::cin >> u >> v;
+        int p = lca(u, v);//找lca
+        if (p <= n) {
+            //若是圆点
+            std::cout << d[u] + d[v] - 2 * d[p] << '\n';
+        }
+        else { 
+            //若是方点
+            int len = std::abs(s[A] - s[B]);
+            int dAB = std::min(len, sc[A] - len);
+            int dis = dAB + d[u] - d[A] + d[v] - d[B];
+            std::cout << dis << '\n';
+        }
+    }
+    return 0;
+}
+```
+
+
+
 
 
 ## 二、数据结构
