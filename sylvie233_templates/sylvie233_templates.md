@@ -1522,6 +1522,114 @@ void update(int v, int l, int r, int rt) {
 
 
 
+### 主席树
+
+```c++
+/**
+ * @brief 主席树
+ *  可持续化线段树求区间第k小
+ * 
+ * 
+ *  主席树：
+ *      支持回退，访问之前版本的线段树，每次insert操作，增加插入查询路径上的logN个节点
+ * 
+ *  权值线段树：
+ *      节点区间：序列的值域
+ *      节点信息：值域内数出现的次数
+ *  
+ * 
+ */
+
+#define lc(x) tr[x].l
+#define rc(x) tr[x].r
+
+struct node {
+    int l, r;
+    int s; // 节点值域中的个数
+} tr[N * 22];
+
+int n, m, a[N];
+int root[N], idx;
+std::vector<int> v;
+
+// 建空树，值域（l,r)
+void build(int &x, int l, int r) {
+    x = ++idx;
+    if (l == r) {
+        return;
+    }
+    int m = l + r >> 1;
+    build(lc(x), l, m);
+    build(rc(x), m + 1, r);
+}
+
+// 插入数，并新增logN节点
+// x为前一版本的节点指针，y为当前版本的节点指针
+void insert(int x, int &y, int l, int r, int v) {
+    y = ++idx;
+    // 复制前一个版本的当前节点
+    tr[y] = tr[x];
+    tr[y].s++;
+    if (l == r) {
+        return;
+    }
+    int m = l + r >> 1;
+    if (v <= m) {
+        insert(lc(x), lc(y), l, m, v);
+    } else {
+        insert(rc(x), rc(y), m + 1, r, v);
+    }
+}
+
+// 区间第k小=【l，r】的信息-【1，l-1】的信息，
+// 查询信息即为在第l~第r次插入中节点新增个数信息中的第k个
+int query(int x, int y, int l, int r, int k) {
+    if (l == r) {
+        return l;
+    }
+    int m = l + r >> 1;
+    // 差值即为新增个数
+    int s = tr[lc(y)].s - tr[lc(x)].s;
+    if (k <= s) {
+        return query(lc(x), lc(y), l, m, k);
+    } else {
+        return query(rc(x), rc(y), m + 1, r, k - s);
+    }
+}
+
+int get_id(int x) {
+    return std::lower_bound(v.begin(), v.end(), x) - v.begin() + 1;
+}
+
+int main(){
+    std::cin >> n >> m;
+    for (int i = 1; i <= n; i++) {
+        std::cin >> a[i];
+        v.push_back(a[i]);
+    }
+    std::sort(v.begin(), v.end());
+    v.erase(unique(v.begin(), v.end()), v.end());
+    int vn = v.size(); //值域边界
+    // 初始空树
+    build(root[0], 1, vn);
+    for(int i = 1; i <= n; i++) {
+        insert(root[i - 1], root[i], 1, vn, get_id(a[i]));
+    }
+        
+    while (m--) {
+        int l, r, k;
+        std::cin >> l >> r >> k;
+        int id = query(root[l - 1], root[r], 1, vn, k) - 1;
+        std::cout << v[id] << '\n';
+    }
+    return 0;
+}
+```
+
+
+
+
+
 ### 平衡树
 
 #### 普通平衡树Splay
