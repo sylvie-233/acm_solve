@@ -1522,6 +1522,117 @@ void update(int v, int l, int r, int rt) {
 
 
 
+### 可持续化数组
+
+```c++
+/**
+ * @brief 可持续化数组
+ *  你需要维护这样的一个长度为 N 的数组，支持如下几种操作
+ *      1.在某个历史版本上修改某一个位置上的值
+ *      2.访问某个历史版本上的某一位置的值
+ *      3.此外，每进行一次操作（对于操作2，即为生成一个完全一样的版本，不作任何改动），就会生成一个新的版本。版本编号即为当前操作的编号（从1开始编号，版本0表示初始状态数组）
+ *  
+ *  使用可持续化线段树来维护数组，区间维护下标，动态开点存储
+ */
+
+#define lc(x) tr[x].l
+#define rc(x) tr[x].r
+
+struct node {
+    int l, r;
+    int v;
+} tr[N * 25];
+
+int n, m, a[N];
+int root[N], idx;
+
+// 初始化区间（1，n）
+void build(int &x, int l, int r) {
+    x = ++idx;
+    if (l == r) {
+        tr[x].v = a[l];
+        return;
+    }
+    int m = l + r >> 1;
+    build(lc(x), l, m);
+    build(rc(x), m + 1, r);
+}
+
+/**
+ * @brief 修改历史版本上的pos上的值
+ * 
+ * @param x 当前版本的节点指针
+ * @param y 被修改的节点指针
+ * @param l 
+ * @param r 
+ * @param pos 
+ * @param v 
+ */
+void modify(int &x, int y, int l, int r, int pos, int v) {
+    x = ++idx;
+    tr[x] = tr[y];
+    if (l == r) {
+        tr[x].v = v;
+        return;
+    }
+    int mid = l + r >> 1;
+    if (pos <= mid) {
+        modify(lc(x), lc(y), l, mid, pos, v);
+    } else {
+        modify(rc(x), rc(y), mid + 1, r, pos, v);
+    }
+}
+
+/**
+ * @brief 访问历史版本上pos位置上的值
+ * 
+ * @param x 版本指针
+ * @param l 
+ * @param r 
+ * @param pos 
+ * @return int 
+ */
+int query(int x, int l, int r, int pos) {
+    if (l == r) {
+        return tr[x].v;
+    }
+    int mid = l + r >> 1;
+    if (pos <= mid) {
+        return query(lc(x), l, mid, pos);
+    } else {
+        return query(rc(x), mid + 1, r, pos);
+    }
+}
+
+int main(){
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    int ver, op, x, y;
+    std::cin >> n >> m;
+    for(int i = 1; i <= n; i++) {
+        std::cin >> a[i];
+    }
+    // 初始化
+    build(root[0], 1, n);
+    for (int i = 1; i <= m; i++) {
+        std::cin >> ver >> op;
+        if (op == 1) {
+            std::cin >> x >> y;
+            modify(root[i], root[ver], 1, n, x, y);      
+        } else{
+            std::cin >> x;
+            std::cout << query(root[ver], 1, n, x) << '\n';
+            root[i] = root[ver];
+        }
+    }
+    return 0;
+}
+```
+
+
+
+
+
 ### 主席树
 
 ```c++
