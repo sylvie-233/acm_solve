@@ -3087,6 +3087,109 @@ ll query(ll x) {
 
 
 
+### 可持续化01字典树
+
+```c++
+/**
+ * @brief 可持续化01字典树
+ *  给定一个非负整数序列 {a}，初始长度为n。
+ *      有 m 个操作，有以下两种操作类型：
+ *          1. A x：添加操作，表示在序列末尾添加一个数 x，序列的长度 n+1。
+ *          2. Q l r x：询问操作，你需要找到一个位置 p，满足l≤p≤r，使得： a[p]⊕a[p+1]⊕...⊕a[N]⊕x 最大，输出最大是多少。
+ * 
+ * 
+ *  区间和转为前缀和：
+ *      s[i]=a[1]⊕a[2]⊕...⊕a[i]
+ *      a[p]⊕a[p+1]⊕...⊕a[N]⊕x => s[p-1]  ⊕  s[n]⊕x
+ *          p属于[l,r],则查询区间p-1属于[l-1,r-1],查询数为s[n]⊕x的异或最大值
+ *      从r-1的历史版本中查询，并且边界不能超过l-1
+ * 
+ *  动态开点
+ */
+
+int n, m, s[N];
+int ch[N * 25][2], ver[N * 25];
+int root[N], idx, len = 23;
+
+/**
+ * @brief 插入新节点
+ * 
+ * @param x 当前版本的根节点
+ * @param y 上一版本的根节点
+ * @param i 版本号（区间下标）
+ */
+void insert(int x, int y, int i) {
+    ver[x] = i;
+    for (int k = len; k >= 0; k--) {
+        int c = (s[i] >> k) & 1;
+        ch[x][!c] = ch[y][!c];
+        ch[x][c] = ++idx;
+        x = ch[x][c];
+        y = ch[y][c];
+        ver[x] = i;
+    }
+}
+
+/**
+ * @brief 异或查询[l-1,r-1],最大结果值
+ * 
+ * @param x r-1版本的根
+ * @param L l-1左边界版本
+ * @param v 值s[n]^x
+ * @return int 
+ */
+int query(int x, int L, int v) {
+    int res = 0;
+    for (int k = len; k >= 0; k--) {
+        int c = (v >> k) & 1;
+        // 即使到了0号节点也能继续
+        if (ver[ch[x][!c]] >= L) {
+            x = ch[x][!c];
+            res += 1 << k;
+        } else {
+            x = ch[x][c];
+        }
+    }
+    return res;
+}
+
+int main(){
+    int l, r, x, ans;
+    char op;
+    std::cin >> n >> m;
+    // 0号节点的版本为-1
+    ver[0] = -1;
+    // 空树的根节点标号为1（0号节点的左右儿子仍为0）
+    root[0] = ++idx;
+    insert(root[0], 0, 0);
+
+    for(int i = 1; i <= n; i++) {
+        std::cin >> x;
+        root[i] = ++idx;
+        s[i] = s[i-1] ^ x;
+        insert(root[i], root[i - 1], i);
+    }
+
+    while(m--) {
+        std::cin >> op;
+        if (op == 'A') {
+            std::cin >> x;
+            root[++n] = ++idx;
+            s[n] = s[n-1]^x;
+            insert(root[n], root[n-1], n);
+        }
+        else {
+            std::cin >> l >> r >> x;
+            ans = query(root[r - 1], l - 1,s[n] ^ x);
+            std::cout << ans << '\n';
+        }
+    }
+    return 0;
+}
+```
+
+
+
 
 
 ## 五、其它算法
