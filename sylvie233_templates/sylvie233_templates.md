@@ -2332,6 +2332,165 @@ int main() {
 
 
 
+#### 可持续化平衡树
+
+```c++
+/**
+ * @brief 可持续化平衡树
+ *      基于FHQ Treap的动态开点
+ * 
+ *  您需要写一种数据结构（可参考题目标题），来维护一个可重整数集合，其中需要提供以下操作（ 对于各个以往的历史版本 ）：
+ *      1.插入 x
+ *      2.删除 x（若有多个相同的数，应只删除一个，如果没有请忽略该操作）
+ *      3.查询 x 的排名（排名定义为比当前数小的数的个数 +1
+ *      4.查询排名为 x 的数
+ *      5.求 x 的前驱（前驱定义为小于 x，且最大的数，如不存在输出 -2^31+1）
+ *      6.求 x 的后继（后继定义为大于 x，且最小的数，如不存在输出 2^31-1）
+ *  和原本平衡树不同的一点是，每一次的任何操作都是基于某一个历史版本，同时生成一个新的版本。（操作3, 4, 5, 6即保持原版本无变化）
+ *  每个版本的编号即为操作的序号（版本0即为初始状态，空树）
+ * 
+ *  每行：v,opt,x
+ */
+
+struct node {
+    int l, r;
+    int val;
+    int rnd;
+    int size;
+} tr[N * 50];
+
+int root[N], idx;
+
+void new_node(int &x, int v) {
+    x = ++idx;
+    tr[x].val = v;
+    tr[x].rnd = std::rand();
+    tr[x].size = 1;
+}
+
+void pushup(int p) {
+    tr[p].size = tr[tr[p].l].size + tr[tr[p].r].size + 1;
+}
+
+/**
+ * @brief 分裂时，记录分裂路径，对路径上的点进行动态开点
+ * 
+ * @param p 
+ * @param v 
+ * @param x 
+ * @param y 
+ */
+void split(int p, int v, int &x, int &y) {
+    if (!p) {
+        x = y = 0;
+        return;
+    }
+    if (tr[p].val <= v) {
+        x = ++idx;
+        tr[x] = tr[p];
+        split(tr[x].r, v, tr[x].r, y);
+        pushup(x);
+    } else {
+        y = ++idx;
+        tr[y] = tr[p];
+        split(tr[y].l, v, x, tr[y].l);
+        pushup(y);
+    }
+}
+
+int merge(int x, int y) {
+    if (!x || !y) {
+        return x + y;
+    }
+    if (tr[x].rnd < tr[y].rnd) {
+        tr[x].r = merge(tr[x].r, y);
+        pushup(x);
+        return x;
+    } else {
+        tr[y].l = merge(x, tr[y].l);
+        pushup(y);
+        return y;
+    }
+}
+
+void insert(int &root, int v) {
+    int x, y, z;
+    // 分裂路径动态开点(因为插入点仅影响分裂路径上的点的结构：x的右节点，y的左节点 上的点，而不影响前一版本上的点)
+    split(root, v, x, y);
+    new_node(z, v);
+    root = merge(merge(x, z), y);
+}
+
+void del(int &root, int v) {
+    int x, y, z;
+    // 分裂路径动态开点
+    split(root, v, x, z);
+    split(x, v - 1, x, y);
+    y = merge(tr[y].l, tr[y].r);
+    root = merge(merge(x, y), z);
+}
+
+int get_rank(int &root, int v) {
+    int x, y;
+    split(root, v - 1, x, y);
+    int ans = tr[x].size + 1;
+    root = merge(x, y);
+    return ans;
+}
+
+int get_val(int root, int v) {
+  if(v == tr[tr[root].l].size+1)
+    return tr[root].val;
+  else if(v <= tr[tr[root].l].size)
+    return get_val(tr[root].l, v);
+  else 
+    return get_val(tr[root].r, 
+        v - tr[tr[root].l].size - 1);
+}
+
+int get_pre(int &root, int v){
+  int x, y, s, ans;
+  split(root, v - 1, x, y);
+  if (!x)
+    return -2147483647;
+  s = tr[x].size;
+  ans = get_val(x, s);
+  root = merge(x, y);
+  return ans;
+}
+
+int get_nxt(int &root, int v) {
+  int x, y, ans;
+  split(root, v, x, y);
+  if (!y)
+    return 2147483647;
+  else 
+    ans = get_val(y, 1);
+  root = merge(x, y);
+  return ans;
+}
+
+int main(){
+    int n, ver, op, v;
+    std::cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        std::cin >> ver >> op >> v;
+        root[i] = root[ver];
+        if (op == 1) insert(root[i], v);
+        else if(op == 2) del(root[i], v);
+        else if(op == 3) std::cout << get_rank(root[i], v) << '\n';
+        else if(op == 4) std::cout << get_val(root[i], v) << '\n';
+        else if(op == 5) std::cout << get_pre(root[i], v) << '\n';
+        else std::cout << get_nxt(root[i], v) << '\n';
+    }
+  return 0;
+}
+```
+
+
+
+
+
 ### 动态树 LCT
 
 ```c++
