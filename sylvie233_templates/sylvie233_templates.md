@@ -2489,6 +2489,326 @@ int main(){
 
 
 
+### 线段树套平衡树
+
+```c++
+/**
+ * @brief 线段树套平衡树
+ *  线段树的每个节点对应一个区间，在每个节点上构建一棵平衡树，维护该区间的序列
+ * 
+ *  您需要写一种数据结构（可参考题目标题），来维护一个有序数列，其中需要提供以下操作：
+ *      1.查询 k 在区间内的排名
+ *      2.查询区间内排名为 k 的值
+ *      3.修改某一位值上的数值
+ *      4.查询 k 在区间内的前驱（前驱定义为严格小于 x，且最大的数，若不存在输出 -2147483647）
+ *      5.查询 k 在区间内的后继（后继定义为严格大于 x，且最小的数，若不存在输出 2147483647）
+ */
+
+#define ls(x) tr[x].s[0]
+#define rs(x) tr[x].s[1]
+#define lc u<<1
+#define rc u<<1|1
+
+struct node {
+    int s[2], p;
+    int v, siz;
+    void init(int p1, int v1) {
+        p = p1;
+        v = v1;
+        siz = 1;
+    }
+} tr[N * 40];
+
+int n, m, w[N], idx;
+int root[N * 4];
+
+void pushup(int x) {
+    tr[x].siz = tr[ls(x)].siz + tr[rs(x)].siz + 1;
+}
+
+void rotate(int x) {
+    // x转到y的位置
+    int y = tr[x].p, z = tr[y].p;
+    int k = tr[y].s[1] == x;
+
+    tr[z].s[tr[z].s[1] == y] = x;
+    tr[x].p = z;
+
+    tr[y].s[k] = tr[x].s[k ^ 1];
+    tr[tr[x].s[k ^ 1]].p = y;
+    
+    tr[x].s[k ^ 1] = y;
+    tr[y].p = x;
+
+    pushup(y);
+    pushup(x);
+}
+
+void splay(int &root, int x, int k) {
+    while (tr[x].p != k) {
+        // x转到z的位置（转两次，若z等于k则转一次）
+        int y = tr[x].p, z = tr[y].p;
+        // 曲链转直链，直链再转曲链
+        if (z != k) {
+            if ((rs(y) == x) ^ (rs(z) == y)) {
+                rotate(x);
+            } else {
+                rotate(y);
+            }
+        }
+        rotate(x);
+    }
+    if (!k) {
+        root = x;
+    }
+}
+
+void insert(int &root, int v) {
+    int u = root, p = 0;
+    while (u) {
+        p = u;
+        u = tr[u].s[v > tr[u].v];
+    }
+    u = ++idx;
+    tr[p].s[v > tr[p].v] = u;
+    tr[u].init(p, v);
+    splay(root, u, 0);
+}
+
+int get_rank(int root, int v) {
+    int u = root, res = 0;
+    while (u) {
+        if (tr[u].v < v) {
+            res += tr[ls(u)].siz + 1;
+            u = rs(u);
+        } else {
+            u = ls(u);
+        }
+    }
+    return res;
+}
+
+void del(int &root, int v) {
+    int u = root;
+    while (u) {
+        if (tr[u].v == v) {
+            break;
+        }
+        if (tr[u].v < v) {
+            u = rs(u);
+        } else {
+            u = ls(u);
+        }
+    }
+    splay(root, u, 0);
+    int l = ls(u), r = rs(u);
+    while (rs(l)) {
+        l = rs(l);
+    }
+    while (ls(r)) {
+        r = ls(r);
+    }
+    splay(root, l, 0);
+    splay(root, r, l);
+    ls(r) = 0;
+    splay(root, r, 0);
+}
+
+int get_pre(int root, int v) {
+    int u = root, res = -INF;
+    while (u) {
+        if (tr[u].v < v) {
+            res = tr[u].v;
+            u = rs(u);
+        } else {
+            u = ls(u);
+        }
+    }
+    return res;
+}
+
+int get_nxt(int root, int v) {
+    int u = root, res = INF;
+    while (u) {
+        if (tr[u].v > v) {
+            res = tr[u].v;
+            u = ls(u);
+        } else {
+            u = rs(u);
+        }
+    }
+    return res;
+}
+
+// 树套树的构建(区间1~n)
+void build(int u, int l, int r) {
+    insert(root[u], -INF);
+    insert(root[u], INF);
+    for (int i = l; i <= r; i++) {
+        insert(root[u], w[i]);
+    }
+    if (l == r) {
+        return;
+    }
+    int mid = l + r >> 1;
+    build(lc, l, mid);
+    build(rc, mid + 1, r);
+}
+
+/**
+ * @brief 求区间排名
+ *  线段树负责裂开，平衡树负责查找
+ * 
+ * @param u 
+ * @param l 固定区间
+ * @param r 
+ * @param x 查询区间
+ * @param y 
+ * @param v 
+ * @return int 
+ */
+int query_rank(int u, int l, int r, int x, int y, int v) {
+    if (x <= l && r <= y) {
+        // 减去一个-INF
+        return get_rank(root[u], v) - 1;
+    }
+    int mid = l + r >> 1, res = 0;
+    if (x <= mid) {
+        res += query_rank(lc, l, mid, x, y, v);
+    }
+    if (y > mid) {
+        res += query_rank(rc, mid + 1, r, x, y, v);
+    }
+    return res;
+}
+
+/**
+ * @brief 求区间排名为k的数值
+ *  二分查找(枚举数值)
+ * @param u 
+ * @param x 
+ * @param y 
+ * @param k 
+ * @return int 
+ */
+int query_val(int u, int x, int y, int k) {
+    int l = 0, r = 1e8, ans;
+    while (l <= r) {
+        int mid = l + r >> 1;
+        if (query_rank(1, 1, n, x, y, mid) + 1 <= k) {
+            l = mid + 1;
+            ans = mid;
+        } else {
+            r = mid -1;
+        }
+    }
+    return ans;
+}
+
+/**
+ * @brief 修改某一位置上的值，穿透每一层，在平衡树上删除数，再添加数
+ * 
+ * @param u 
+ * @param l 
+ * @param r 
+ * @param pos 
+ * @param v 
+ */
+void change(int u, int l, int r, int pos, int v) {
+    del(root[u], w[pos]);
+    insert(root[u], v);
+    if (l == r) {
+        return;
+    }
+    int mid = l + r >> 1;
+    if (pos <= mid) {
+        change(lc, l, mid, pos, v);
+    } else {
+        change(rc, mid + 1, r, pos, v);
+    }
+}
+
+/**
+ * @brief 区间某值前驱
+ * 
+ * @param u 
+ * @param l 
+ * @param r 
+ * @param x 
+ * @param y 
+ * @param v 
+ * @return int 
+ */
+int query_pre(int u, int l, int r, int x, int y, int v) {
+    if (x <= l && r <= y) {
+        return get_pre(root[u], v);
+    }
+    int mid = l + r >> 1, res = -INF;
+    if (x <= mid) {
+        res = std::max(res, query_pre(lc, l, mid, x, y, v));
+    }
+    if (y > mid) {
+        res = std::max(res, query_pre(rc, mid + 1, r, x, y, v));
+    }
+    return res;
+}
+
+/**
+ * @brief 区间某值后继
+ * 
+ * @param u 
+ * @param l 
+ * @param r 
+ * @param x 
+ * @param y 
+ * @param v 
+ * @return int 
+ */
+int query_nxt(int u, int l, int r, int x, int y, int v) {
+    if (x <= l && r <= y) {
+        return get_nxt(root[u], v);
+    }
+    int mid = l + r >> 1, res = INF;
+    if (x <= mid) {
+        res = std::min(res, query_nxt(lc, l, mid, x, y, v));
+    }
+    if (y > mid) {
+        res = std::min(res, query_nxt(rc, mid + 1, r, x, y, v));
+    }
+    return res;
+}
+
+int main(){
+    std::cin >> n >> m;
+    for(int i = 1; i <= n; i++) {
+        std::cin >> w[i];
+    }
+    build(1, 1, n);
+    while (m--) {
+        int op, x, y, v;
+        std::cin >> op;
+        if (op == 3) std::cin >> x >> v;
+        else std::cin >> x >> y >> v;
+
+        if (op == 1)
+            std::cout << query_rank(1, 1, n, x, y, v) + 1 << '\n';
+        if (op == 2) 
+            std::cout << query_val(1,x,y,v) << '\n';;
+        if (op == 3){
+            change(1, 1, n, x, v);
+            w[x] = v;
+        }
+        if (op == 4)
+            std::cout << query_pre(1, 1, n, x, y, v) << '\n';
+        if (op == 5)
+            std::cout << query_nxt(1, 1, n, x, y, v) << '\n';
+    }
+    return 0;
+}
+```
+
+
+
 
 
 ### 动态树 LCT
