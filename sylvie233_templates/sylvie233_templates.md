@@ -964,6 +964,169 @@ int main(){
 
 
 
+### 树分治
+
+```c++
+/**
+ * @brief 树分治
+ *  给定一棵有 n 个点的树，m次询问，询问树上距离为 k 的点对是否存在。
+ * 
+ * 
+ * 树分治：包含点分治和边分治
+ * 
+ * 树上的路径有两种：
+ *      1.经过根节点的路径
+ *      2.不经过根节点的路径
+ * 
+ * 经过根节点的路径：
+ *      枚举根节点下的每棵子树
+ *      dis[u,v]=dis[u,root]+dis[v,root],排除u，v在同一棵子树上，先把前面子树中各点到根的距离存入一个队列q[i]，并且judge[q[i]]为true，在枚举当前子树中各点到根的距离dis[j]，判断judge[k-dis[j]]
+ * 
+ * 不经过根节点的路径：
+ *      对子树不断分治，转化为经过根节点的路径
+ *      （分治前，对每棵子树找出重心做根）
+ * 
+ * 
+ * 
+ * 点分治：
+ *      1.找出树的重心做根，get_root()
+ *      2.求出子树中的各点到根的距离，get_dis()
+ *      3.对当前树统计答案，calc()
+ *      4.分治各个子树，重复操作，divide()
+ */
+
+struct node {
+    int v, w, ne;
+} e[N << 1];
+
+int h[N], idx;
+int del[N], siz[N], mxs, sum, root;
+int dis[N], d[N], cnt;
+int ans[N], q[INF], judge[INF];
+int n, m, ask[N];
+
+void add(int u, int v, int w) {
+    e[++idx].v = v;
+    e[idx].w = w;
+    e[idx].ne = h[u];
+    h[u] = idx;
+}
+
+// 计算重心
+void get_root(int u, int fa) {
+    siz[u] = 1;
+    int s = 0;
+    for (int i = h[u]; i; i = e[i].ne) {
+        int v = e[i].v;
+        if (v == fa || del[v]) {
+            continue;
+        }
+        get_root(v, u);
+        siz[u] += siz[v];
+        // 最大的子树中的节点个数
+        s = std::max(s, siz[v]);
+    }
+    // 外边的节点个数
+    s = std::max(s, sum - siz[u]);
+    // 更新重心节点
+    if (s < mxs) {
+        mxs = s;
+        root = u;
+    }
+}
+
+void get_dis(int u, int fa) {
+    // 记录当前子树到根节点的距离
+    dis[++cnt] = d[u];
+    for (int i = h[u]; i; i = e[i].ne) {
+        int v = e[i].v;
+        if (v == fa || del[v]) {
+            continue;
+        }
+        d[v] = d[u] + e[i].w;
+        get_dis(v, u);
+    }
+}
+
+void calc(int u) {
+    del[u] = judge[0] = 1;
+    int p = 0;
+
+    for (int i = h[u]; i; i = e[i].ne) {
+        int v = e[i].v;
+        if (del[v]) {
+            continue;
+        }
+        // 记录当前子树队列中的个数
+        cnt = 0;
+        d[v] = e[i].w;
+        get_dis(v, u);
+
+        // 枚举当前子树求解答案
+        for (int j = 1; j <= cnt; j++) {
+            for (int k = 1; k <= m; k++) {
+                if (ask[k] >= dis[j]) {
+                    ans[k] |= judge[ask[k] - dis[j]];
+                }
+            }
+        }
+
+        // 记录当前子树距离
+        for (int j = 1; j <= cnt; j++) {
+            if (dis[j] < INF) {
+                q[++p] = dis[j];
+                judge[dis[j]] = 1;
+            }
+        }
+    }
+
+    // 一次计算后重置judge数组
+    for (int i = 1; i <= p; i++) {
+        judge[q[i]] = 0;
+    }
+}
+
+void divide(int u) {
+    // 计算经过u的路径
+    calc(u);
+    // 枚举子树
+    for (int i = h[u]; i; i = e[i].ne) {
+        int v = e[i].v;
+        if (del[v]) {
+            continue;
+        }
+        mxs = sum = siz[v];
+        get_root(v, 0);
+        // 递归枚举子树
+        divide(root);
+    }
+}
+
+int main(){
+    std::cin >> n >> m;
+    for (int i = 1; i < n; ++i) {
+        int u, v, w;
+        std::cin >> u >> v >> w;
+        add(u, v, w);
+        add(v, u, w);
+    }
+    for (int i = 1; i <= m; ++i) {
+        std::cin >> ask[i];
+    }
+    mxs = sum = n;
+    get_root(1, 0); 
+    get_root(root, 0); 
+    divide(root);
+
+    for(int i = 1; i <= m; ++i) {
+        std::cout << (ans[i] ? "AYE" : "NAY") << '\n';
+    }
+    return 0;
+}
+```
+
+
+
 
 
 ## 二、数据结构
