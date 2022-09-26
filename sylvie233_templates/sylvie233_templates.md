@@ -1127,6 +1127,265 @@ int main(){
 
 
 
+### 点分树
+
+```c++
+/**
+ * @brief 点分树
+ * 
+ * 在一片土地上有 n 个城市，通过 n-1条无向边互相连接，形成一棵树的结构，相邻两个城市的距离为 1，其中第 i 个城市的价值为 value_i
+接下来你需要在线处理 m 次操作：
+ *      0 x k 表示发生了一次地震，震中城市为 x，影响范围为 k，所有与 x 距离不超过 k 的城市都将受到影响，该次地震造成的经济损失为所有受影响城市的价值和。
+ *      1 x y 表示第 x 个城市的价值变成了 y 。
+ * 
+ * 
+ * 利用点分治，以每个子树的重心为根，重构一棵原树称为点分树。
+ * 	lca+线段树+重心+点分治+容斥定理
+ */
+
+int n, m, w[N];
+int idx, h[N], to[N * 2], ne[N * 2];
+void add(int x,int y) {
+  to[++idx] = y;
+  ne[idx] = h[x];
+  h[x] = idx;
+}
+
+struct LCA{ //最近公共祖先
+    int dep[N], fa[N][20];
+    // 遍历
+    void dfs(int u, int f) {
+        dep[u] = dep[f] + 1;
+        fa[u][0] = f;
+        for (int i = 1; i <= 19; i++) 
+            fa[u][i] = fa[fa[u][i - 1]][i - 1]; 
+        for(int i = h[u]; i; i = ne[i])
+            if(to[i] != f) 
+                dfs(to[i], u);        
+    }
+    int lca(int u, int v) {
+        if(dep[u] < dep[v])
+            std::swap(u, v);
+        for(int i=19; ~i; i--)
+            if(dep[fa[u][i]] >= dep[v]) 
+                u = fa[u][i];
+        if(u == v) 
+            return v;
+        for(int i = 19; ~i; i--)
+            if(fa[u][i] != fa[v][i]) {
+                u = fa[u][i];
+                v = fa[v][i];
+            }
+        return fa[u][0];
+    }
+    int getdis(int x,int y){ //计算两点在原树中的距离
+        return dep[x] + dep[y] - 2 * dep[lca(x, y)];
+    }
+} lca;
+
+struct SegTree{ //线段树
+    int cnt, root[N], sum[N * 40], lc[N * 40], rc[N * 40];
+    // 更新pos[d]上的值
+    void change(int &u, int l, int r, int d, int v) {
+        if(!u)
+            u = ++cnt;
+        if(l == r) {
+            sum[u] += v; 
+            return;
+        }
+        int mid = l + r >> 1;
+        if(d <= mid) 
+            change(lc[u], l, mid, d, v);
+        else 
+            change(rc[u], mid + 1, r, d, v);
+        sum[u] = sum[lc[u]] + sum[rc[u]];
+    }
+    int query(int u, int l, int r, int x, int y) {
+        if (!u || r < x || l > y)
+            return 0;
+        if(x <= l && r <= y)
+            return sum[u];
+        int mid = l + r >> 1;
+        return query(lc[u], l, mid, x, y) + query(rc[u], mid + 1, r, x, y);
+    }
+} sg,ch;
+
+struct PointTree{ //点分树
+    int root, sum, siz[N], mxp[N], del[N];
+    /**
+     * @brief 更新root节点，获取siz[]
+     * 
+     * @param x 
+     * @param fa 
+     */
+    void findwc(int x,int fa) { //找重心
+        siz[x] = 1;
+        mxp[x] = 0;
+        for(int i = h[x]; i; i = ne[i])
+            if(to[i] != fa && !del[to[i]]) {
+                findwc(to[i], x);
+                siz[x] += siz[to[i]];
+                mxp[x] = std::max(mxp[x], siz[to[i]]);
+            }
+        // 外边点
+        mxp[x] = std::max(mxp[x], sum - siz[x]);
+        if(mxp[x] < mxp[root]) root = x;
+    }
+    /**
+     * @brief 原树x节点下的重心节点root
+     * 
+     * @param x 
+     * @param size 
+     */
+    void getroot(int x,int size) { //找出根
+        mxp[root = 0] = sum = size;
+        findwc(x, -1);
+        // 找两次是因为第一次findwc构建的siz[]是以1为起始节点遍历的
+        findwc(root, -1);//确保siz[]正确  
+    }
+
+    int dis[N][20],dep[N],fa[N];
+    /**
+     * @brief 
+     *      线段树的区间为深度值（距离），区间信息维护权值和
+     * sg[x][a,b]：在点分树上，以x为根的子树中，
+     *  到x的原始距离为[a,b]的各点的权值和
+     * @param x 
+     * @param fa 
+     * @param wc 
+     * @param d 深度值 
+     */
+    void build_sg(int x, int fa, int wc, int d) {
+        // root[]存放每棵线段树的根
+        sg.change(sg.root[wc], 0, n, d, w[x]);
+        for(int i = h[x]; i; i = ne[i])
+            if(to[i] != fa && !del[to[i]]) 
+                build_sg(to[i], x, wc, d + 1);
+    }
+    /**
+     * @brief 构建点分树（重心）
+     * ch[x][a,b]：在点分树上，以x为根的子树中，
+     *  到x的父节点的原始距离为[a,b]的各点的权值和
+     * 
+     * 注意此时为原树中的距离
+     * @param x 
+     * @param fa 
+     * @param wc 
+     * @param d 
+     */
+    void build_ch(int x, int fa, int wc, int d) {
+        ch.change(ch.root[wc], 0, n, d, w[x]);
+        for(int i = h[x]; i; i = ne[i])
+            if(to[i] != fa && !del[to[i]]) 
+                build_ch(to[i], x, wc, d + 1);
+    }
+    /**
+     * @brief 递归构建
+     * 
+     * @param x 为root重心
+     */
+    void build(int x) { //建点分树
+        del[x] = true;
+        build_sg(x, -1, x, 0);
+        for(int i = h[x]; i; i = ne[i]) {
+            if(del[to[i]])
+                continue;
+            getroot(to[i], siz[to[i]]);    
+            // 构建点分树（因为to[i]与点分树上重心的父节点是直接相连的，所以距离为1）
+            build_ch(to[i], -1, root, 1);
+            // 记录点分树重心的父节点
+            fa[root] = x;
+            // 记录节点在点分树中的深度
+            dep[root] = dep[x] + 1;
+            build(root);
+        }
+    }
+    // 初始化点分树 
+    void init(){
+        getroot(1, n); //找根
+        build(root);  //建树
+        // 以1为起始节点构建lca
+        lca.dfs(1, -1); //求lca
+        // dis[i][j]：节点i的向上j级父节点（点分树）
+        for(int i = 1; i <= n; i++) //原树中的点距
+            for(int j = i; j; j = fa[j]) 
+                dis[i][dep[i] - dep[j]] = lca.getdis(i, j);  
+    }
+    /**
+     * @brief 查询距离节点x不超过y的节点的权值和
+     * 
+     * 先将答案加上sg[x]中下标从0到y的权值和
+     * 然后遍历x的所有祖先u，令d=dis(x,u)，
+     * 再将答案加上sg[u]中下标从0到y-d的权值和
+     * 由于重复计算了u的x子树中的部分，
+     * 再将答案减去ch[x]中下标从0到y-d的权值和
+     * 
+     * 
+     * 负数距离在线段树的query中返回0
+     * @param x 
+     * @param y 
+     * @return int 
+     */
+    int query(int x, int y){
+        int res = sg.query(sg.root[x], 0, n, 0, y);
+        // 遍历点分树上的父级
+        for(int i = x; fa[i]; i = fa[i]) {
+            int d = dis[x][dep[x] - dep[fa[i]]];
+            // 容斥操作（sg上包含的节点范围比ch上包含的要多，差值为父节点上新增的节点权值和）
+            res += sg.query(sg.root[fa[i]], 0, n, 0, y-d);
+            res -= ch.query(ch.root[i], 0, n, 0, y-d);
+        }
+        return res;
+    }
+    /**
+     * @brief 更新
+     * 
+     * @param x 
+     * @param y 
+     */
+    void change(int x, int y){
+        sg.change(sg.root[x], 0, n, 0, y - w[x]);
+        // 遍历父节点上的线段树更新
+        for(int i = x; fa[i]; i = fa[i]){
+            int d = dis[x][dep[x] - dep[fa[i]]];
+            sg.change(sg.root[fa[i]], 0, n, d, y - w[x]);
+            ch.change(ch.root[i], 0, n, d, y - w[x]);
+        } 
+    }
+} pt;
+
+int main(){
+    int u, v, op, x, y, last = 0;
+    std::cin >> n >> m;
+    for (int i = 1; i <= n; i++) 
+        std::cin >> w[i];
+    for(int i = 1; i < n; i++) {
+        std::cin >> u >> v;
+        add(u, v);
+        add(v, u);
+    }
+    // 构建点分树 
+    pt.init(); 
+    
+    while (m--) {
+        std::cin >> op >> x >> y;
+        x ^= last;
+        y ^= last;
+        if (op == 0) {
+            last = pt.query(x,y);
+            std::cout << last << '\n';
+        }
+        else {
+            pt.change(x, y);
+            w[x] = y;
+        } 
+    }
+    return 0;
+}
+```
+
+
+
 
 
 ## 二、数据结构
