@@ -402,6 +402,112 @@ void solve() {
 
 
 
+#### 3.Kahn(卡恩)算法
+
+```c++
+/**
+ * @brief 拓扑排序
+ *  判环、拓扑序列
+ *  Kahn(卡恩)算法：队列维护一个入度为0的节点的集合
+ */
+
+std::vector<int> e[N], tp;
+int din[N];
+
+int n, m;
+
+bool topo_sort() {
+    std::queue<int> que;
+    for (int i = 1; i <= n; i++) {
+        if (din[i] == 0) {
+            que.push(i);
+        }
+    }
+    while(!que.empty()) {
+        int x = que.front();
+        que.pop();
+        tp.push_back(x);
+        for (auto y : e[x]) {
+            if (--din[y] == 0) {
+                que.push(y);
+            }
+        }
+    }
+    return tp.size() == n;
+}
+
+void solve() {
+    std::cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int a, b;
+        std::cin >> a >> b;
+        e[a].push_back(b);
+        din[b]++;
+    }
+    if (!topo_sort()) {
+        std::cout << -1 << '\n';
+    } else {
+        for (auto x : tp) {
+            std::cout << x << ' ';
+        }
+        std::cout << '\n';
+    }
+}
+```
+
+
+
+#### 4.dfs染色法
+
+```c++
+/**
+ * @brief dfs染色法
+ *  每个节点的颜色都会从0->-1->1
+ *      0: 未遍历节点
+ *      -1：当前已遍历节点
+ *      1：已放入队列中的节点
+ * 
+ *  遍历途中遇到-1节点，则为有环
+ */
+
+std::vector<int> e[N], tp;
+// 染色数组
+int c[N];
+
+int n, m;
+
+bool dfs(int x) {
+    c[x] = -1;
+    for (int y : e[x]) {
+        if (c[y] == -1) {
+            return false;
+        } else if (!c[y]) {
+            if (!dfs(y)) {
+                return false;
+            }
+        }
+    }
+    c[x] = 1;
+    tp.push_back(x);
+    return true;
+}
+
+bool topo_sort() {
+    std::memset(c, 0, sizeof(c));
+    for (int x = 1; x <= n; x++) {
+        if (!c[x]) {
+            if (!dfs(x)) {
+                return false;
+            }
+        }
+    }
+    std::reverse(tp.begin(), tp.end());
+    return true;
+}
+```
+
+
+
 ### 2-SAT
 
 ```c++
