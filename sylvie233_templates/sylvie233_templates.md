@@ -186,6 +186,61 @@ bool bellman_ford(int s) {
 
 
 
+#### 4.SPFA算法
+
+```c++
+/**
+ * @brief SPFA算法
+ *  Bellman-Ford算法的优化
+ * 
+ *  只有本轮被更新的点，其出边才有可能引起下一轮的松弛操作，用队列来维护被更新的点的集合
+ *  最短路的边数最大为n-1，大于等于n则有负环
+ * 
+ * 
+ *  可以处理负边权的情况
+ */
+struct edge {
+    int v, w;
+};
+std::vector<edge> e[N];
+// vis[u]记录u点是否在队内
+int d[N], cnt[N], vis[N];
+
+int n, m;
+
+bool spfa(int s) {
+    std::memset(d, INF, sizeof(d));
+    d[s] = 0;
+    std::queue<int> que;
+    que.push(s);
+    vis[s] = 0;
+    while (!que.empty()) {
+        int u = que.front();
+        que.pop();
+        vis[u] = 0;
+        for (auto ed : e[u]) {
+            int v = ed.v, w = ed.w;
+            if (d[v] > d[u] + w) {
+                d[v] = d[u] + w;
+                cnt[v] = cnt[u] + 1;
+                // cnt[v]记录边数
+                if (cnt[v] >= n) {
+                    // 有负环
+                    return true;
+                }
+                if (!vis[v]) {
+                    que.push(v);
+                    vis[v] = 1;
+                }
+            }
+        }
+    }
+    return false;
+}
+```
+
+
+
 
 
 ### 最小生成树
