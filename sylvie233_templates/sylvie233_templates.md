@@ -62,7 +62,9 @@ ll qmul(ll a, ll b, ll mod) {
 /**
  * @brief dijkstra单源最短路 
  *  数据范围：0~n-1
- * 
+ *
+ *	dijkstra无法处理负边权
+ * 	路径记录：pre[x]记录前驱节点，递归输出
  */
 int n;
 int cost[N][N], d[N];
@@ -128,6 +130,61 @@ void dijkstra(int s) {
     }
 }
 ```
+
+
+
+#### 3.Bellman-Ford算法
+
+```c++
+/**
+ * @brief Bellman-Ford算法
+ *  基于松弛操作的单源最短路算法
+ *      每轮循环，对所有边都尝试进行一次松弛操作
+ *      当一轮循环中没有更新操作时，算法停止（最多n-1轮更新）
+ *          若最短路存在，一轮松弛操作会使最短路的边数至少+1，而最短路的边数最多为n-1，所以最多有n-1轮松弛操作
+ *      第n轮循环中还有更新操作，则有负环
+ * 
+ *  可以处理负边权情况
+ */
+
+struct edge {
+    int v, w;
+};
+std::vector<edge> e[N];
+int d[N];
+
+int n, m;
+
+bool bellman_ford(int s) {
+    std::memset(d, INF, sizeof(d));
+    d[s] = 0;
+    bool flag;
+    // n轮
+    for (int i = 1; i <= n; i++) {
+        flag = false;
+        // 一轮松弛操作
+        for (int u = 1; u <= n; u++) {
+            if (d[u] == INF) {
+                continue;
+            }
+            for (auto ed : e[u]) {
+                int v = ed.v, w = ed.w;
+                if (d[v] > d[u] + w) {
+                    d[v] = d[u] + w;
+                    flag = true;
+                }
+            }
+        }
+        if (!flag) {
+            break;
+        }
+    }
+    // 第n轮=true则有负环
+    return flag;
+}
+```
+
+
 
 
 
