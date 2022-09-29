@@ -241,6 +241,34 @@ bool spfa(int s) {
 
 
 
+#### 5.Floyd
+
+```c++
+/**
+ * @brief Floyd算法
+ *  动态规划、插点法、全源最短路
+ * 
+ *  初始化d[i][j]=INF,d[i][i]=0;
+ * 
+ *  路径记录：p[i][j]=k;中序遍历输出
+ */
+int d[N][N];
+
+int n;
+
+void floyd() {
+    for (int k = 1; k <= n; k++) {
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                d[i][j] = std::min(d[i][j], d[i][k] + d[k][j]);
+            }
+        }
+    }
+}
+```
+
+
+
 
 
 ### 最小生成树
