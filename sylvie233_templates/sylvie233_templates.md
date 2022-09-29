@@ -241,12 +241,13 @@ bool spfa(int s) {
 
 
 
-#### 5.Floyd
+#### 5.Floyd算法
 
 ```c++
 /**
  * @brief Floyd算法
  *  动态规划、插点法、全源最短路
+ *	循环完第k层后，会将所有插点编号不超过k的最短路径找出来，枚举完n层，一定会把所有的最短路径都找出来
  * 
  *  初始化d[i][j]=INF,d[i][i]=0;
  * 
@@ -263,6 +264,122 @@ void floyd() {
                 d[i][j] = std::min(d[i][j], d[i][k] + d[k][j]);
             }
         }
+    }
+}
+```
+
+
+
+#### 6.Johnson算法
+
+```c++
+/**
+ * @brief Johnson(约翰逊)算法
+ *  全员最短路径算法
+ * 
+ *      1.新建一个虚拟源点0，从该点向其他所有点连一条边权为0的边，再用spfa算法求出从0号点到其他所有点的最短路h[i]
+ *      2.将新图的边权改造为w(u,v)+h(u)-h(v)，这样能确保边权非负
+ *      3.以每个点为起点,跑n轮Heap-Dijkstra算法,求出任意两点间最短路
+ * 
+ *  新图d`(s,t)=d(s,t)+h(s)-h(t)
+ *      证明：d`(s,t)=w`(s,a)+w`(a,t)
+ *                  =w(s,a)+h(s)-h(a) + w(a,t)+h(a)-h(t)
+ *                  =w(s,a)+w(a,t) + h(s)-h(t)
+ *                  =d(s,t) + h(s)-h(t)
+ * 
+ *  新图上路径的长度=旧图上路径的长度+h(s)-h(t)
+ * 
+ */
+
+struct edge {
+    int v, w;
+};
+std::vector<edge> e[N];
+int vis[N], cnt[N];
+ll h[N], d[N];
+
+int n, m;
+
+// 虚拟源点到其他各点距离
+void spfa() {
+    std::queue<int> que;
+    std::memset(h, 63, sizeof(h));
+    std::memset(vis, false, sizeof(vis));
+    h[0] = 0;
+    vis[0] = 1;
+    que.push(0);
+    while (!que.empty()) {
+        int u = que.front();
+        que.pop();
+        vis[u] = 0;
+        for (auto ed : e[u]) {
+            int v = ed.v, w = ed.w;
+            if (h[v] > d[u] + w) {
+                h[v] = h[u] + w;
+                cnt[v] = cnt[u] + 1;
+                // 现在一共是n+1个点
+                if (cnt[v] > n) {
+                    std::cout << -1 << '\n';
+                    std::exit(0);
+                }
+                if (!vis[v]) {
+                    que.push(v);
+                    vis[v] = 1;
+                }
+            }
+        }
+    }
+}
+
+void dijkstra(int s) {
+    std::priority_queue<std::pair<ll, int>> que;
+    for (int i = 1; i <= n; i++) {
+        d[i] = INF;
+    }
+    std::memset(vis, false, sizeof(vis));
+    d[s] = 0;
+    que.push({0, s});
+    while (!que.empty()) {
+        int u = que.top().second;
+        que.pop();
+        if (vis[u]) {
+            continue;
+        }
+        vis[u] = 1;
+        for (auto ed : e[u]) {
+            int v = ed.v, w = ed.w;
+            if (d[v] > d[u] + w) {
+                d[v] = d[u] + w;
+                if (!vis[v]) {
+                    que.push({-d[v], v});
+                }
+            }
+        }
+    }
+}
+
+void solve() {
+    std::cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int a, b, c;
+        std::cin >> a >> b >> c;
+        e[a].push_back({b, c});
+    }
+    // 虚拟0点建边
+    for (int i = 1; i <= n; i++) {
+        e[0].push_back({i, 0});
+    }
+    // 计算势能h[i]
+    spfa();
+    // 更新边权，保证非负
+    for (int u = 1; u <= n; u++) {
+        for (auto &ed : e[u]) {
+            ed.w += h[u] - h[ed.v];
+        }
+    }
+    for (int i = 1; i <= n; i++) {
+        dijkstra(i);
+        // d[j] = d[j] - (h[i] - h[j]);
     }
 }
 ```
