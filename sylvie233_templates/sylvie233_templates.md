@@ -386,6 +386,61 @@ void solve() {
 
 
 
+### 最小环
+
+```c++
+/**
+ * @brief 最小环
+ *  利用Floyd分层算的本质，把最小环拆分成三部分：一条最短路+两条临边
+ *      最小环=min{d[i,j]+w[i,k]+w[k,j]}，i、j小于k
+ * 
+ *  Floyd：
+ *      在最外层循环到点k时，d[i,j]表示从i到j仅经过1~k-1的点的最短路
+ *      设最小环中编号最大的顶点为k，环上与k相邻的两个点为i,j，则在最外层循环枚举到k时，该环的长度为ans=d[i,j]+w[i,k]+w[k,j]
+ */
+int n, m;
+int w[N][N], d[N][N];
+
+int floyd() {
+    int ans = INF;
+    for (int k = 1; k <= n; k++) {
+        for (int i = 1; i < k; i++) {
+            for (int j = i + 1; j < k; j++) {
+                ans = std::min(ans, d[i][j] + w[i][k] + w[k][j]);
+            }
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                d[i][j] = std::min(d[i][j], d[i][k] + d[k][j]);
+            }
+        }
+    }
+    return ans;
+}
+
+void solve() {
+    std::cin >> n >> m;
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (i != j) {
+                w[i][j] = 1e8;
+            }
+        }
+    }
+    for (int i = 1; i <= m; i++) {
+        int a, b, c;
+        std::cin >> a >> b >> c;
+        w[a][b] = w[b][a] = c;
+    }
+    std::memcpy(d, w, sizeof(d));
+
+    
+    std::cout << floyd() << '\n';
+}
+```
+
+
+
 
 
 ### 最小生成树
