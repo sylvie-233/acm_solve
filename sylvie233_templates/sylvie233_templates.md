@@ -445,7 +445,7 @@ void solve() {
 
 ### 最小生成树
 
-#### 1.kruskal
+#### 1.kruskal算法
 
 ```c++
 /**
@@ -510,6 +510,104 @@ int kruskal() {
     return res;
 }
 ```
+
+
+
+#### 2.Prim算法
+
+```c++
+/**
+ * @brief Prim算法
+ *  基于贪心的最小生成树(MST)算法
+ *      d[u]存u点与圈外邻点的最小距离,vis[u]标记出圈
+ * 
+ *  类似dijkstra
+ */
+
+struct edge {
+    int v, w;
+};
+
+std::vector<edge> e[N];
+int d[N], vis[N];
+int ans;
+
+int n, m;
+
+bool prim(int s) {
+    int cnt = 0;
+    for (int i = 0; i <= n; i++) {
+        d[i] = INF;
+    }
+    d[s] = 0;
+    for (int i = 1; i <= n; i++) {
+        int u = 0;
+        for (int j = 1; j <= n; j++) {
+            if (!vis[j] && d[j] < d[u]) {
+                u = j;
+            }
+        }
+        vis[u] = 1;
+        ans += d[u];
+        if (d[u] != INF) {
+            cnt++;
+        }
+        for (auto ed : e[u]) {
+            int v = ed.v, w = ed.w;
+            if (d[v] > w) {
+                d[v] = w;
+            }
+        }
+    }
+    return cnt == n;
+}
+
+
+/**
+ * @brief Heap-Prim算法
+ *  堆优化版
+ */
+
+struct edge {
+    int v, w;
+};
+
+std::vector<edge> e[N];
+int d[N], vis[N];
+int ans;
+
+int n, m;
+
+bool prim(int s) {
+    int cnt = 0;
+    std::priority_queue<std::pair<int, int>> que;
+    for (int i = 0; i <= n; i++) {
+        d[i] = INF;
+    }
+    d[s] = 0;
+    que.push({0, s});
+    while (!que.empty()) {
+        int u = que.top().second;
+        que.pop();
+        if (vis[u]) {
+            continue;
+        }
+        vis[u] = 1;
+        ans += d[u];
+        cnt++;
+        for (auto ed : e[u]) {
+            int v = ed.v, w = ed.w;
+            if (d[v] > w) {
+                d[v] = w;
+                que.push({-d[v], v});
+            }
+        }
+    }
+    return cnt == n;
+}
+```
+
+
 
 
 
