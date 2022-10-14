@@ -1008,6 +1008,8 @@ void solve() {
 
 ### LCA
 
+#### 倍增法
+
 ```c++
 /**
  * @brief LCA
@@ -1072,6 +1074,79 @@ void solve() {
     // lca(u, v)
 }
 ```
+
+#### Tarjan
+
+```c++
+/**
+ * @brief LCA-Tarjan
+ *  离线算法，利用并查集维护祖先节点
+ * 
+ *      1.从根开始深搜遍历,入u时打标记
+ *      2.遍历u的儿子v，遍历完v的子树，回u时，把v指向u
+ *      3.遍历完u的儿子们，离u时，枚举以u为起点的查询，若终点v被搜过，则查找v的根，即u，v的LCA，答案记入ans[]
+ *      4.递归遍历完整棵数，得到全部查询答案
+ */
+
+/**
+ * @brief 
+ *  e[u]存树边
+ *  query[u]存查询
+ *  fa[u]存父节点
+ *  vis[u]打标记
+ *  ans[i]存查询结果
+ */
+std::vector<int> e[N];
+std::vector<std::pair<int, int>> query[N];
+int fa[N], vis[N], ans[M];
+
+int n, m;
+
+int find(int u) {
+    if (u == fa[u]) {
+        return u;
+    }
+    return fa[u] = find(fa[u]);
+}
+
+void tarjan(int u) {
+    vis[u] = true;
+    for (auto v : e[u]) {
+        if (!vis[v]) {
+            tarjan(v);
+            fa[v] = u;
+        }
+    }
+    for (auto q : query[u]) {
+        int v = q.first, i = q.second;
+        if (vis[v]) {
+            ans[i] = find(v);
+        }
+    }
+}
+
+void solve() {
+    for (int i = 1; i < n; i++) {
+        int a, b;
+        std::cin >> a >> b;
+        e[a].push_back(b);
+        e[b].push_back(a);
+    }
+    for (int i = 1; i <= m; i++) {
+        int a, b;
+        std::cin >> a >> b;
+        query[a].push_back({b, i});
+        query[b].push_back({a, i});
+    }
+    for (int i = 1; i <= n; i++) {
+        fa[i] = i;
+    }
+    tarjan(1);
+    // 输出ans[i]
+}
+```
+
+
 
 
 
