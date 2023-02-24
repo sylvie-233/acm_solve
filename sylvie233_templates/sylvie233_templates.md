@@ -4093,6 +4093,144 @@ ll qpow(ll a, ll b, ll mod) {
 
 
 
+### 大数运算
+
+```
+/**
+ * @brief 大数加法
+ *  复杂度：O(n)
+ */
+
+VI A, B, C;
+
+void add(VI &A, VI &B, VI &C) {
+    int t = 0;
+    for (int i = 0; i < A.size() || i < B.size(); i++) {
+        if (i < A.size()) t += A[i];
+        if (i < B.size()) t += B[i];
+        C.push_back(t % 10);
+        t /= 10;
+    }
+    if (t) C.push_back(t);
+}
+
+void solve() {
+    std::string a, b;
+    std::cin >> a >> b;
+    for (int i = a.size() - 1; ~i; i--) A.push_back(a[i] - '0');
+    for (int i = b.size() - 1; ~i; i--) B.push_back(b[i] - '0');
+    add(A, B, C);
+    for (int i = C.size() - 1; ~i; i--) std::cout << C[i];
+
+}
+
+
+/**
+ * @brief 大数减法
+ *  复杂度：O(n)
+ */
+
+VI A, B, C;
+
+bool cmp(VI &A, VI &B) {
+    if (A.size() != B.size()) return A.size() > B.size();
+    for (int i = A.size() - 1; ~i; i--) {
+        if (A[i] != B[i]) return A[i] > B[i];
+    }
+    return true;
+}
+
+void sub(VI &A, VI &B, VI &C) {
+    int t = 0;
+    for (int i = 0; i < A.size(); i++) {
+        t = A[i];
+        if (i < B.size()) t -= B[i];
+        if (t < 0) {
+            A[i + 1]--;
+            t += 10;
+        }
+        C.push_back(t);
+    }
+    // 去除前导0
+    while (C.size() > 1 && !C.back()) C.pop_back();
+}
+
+void solve() {
+    std::string a, b;
+    std::cin >> a >> b;
+    for (int i = a.size(); ~i; i--) A.push_back(a[i] - '0');
+    for (int i = b.size(); ~i; i--) B.push_back(b[i] - '0');
+    if (!cmp(A, B)) {
+        std::swap(A, B);
+        std::cout << "-";
+    }
+    sub(A, B, C);
+    for (int i = C.size(); ~i; i--) std::cout << C[i];
+}
+
+
+/**
+ * @brief 大数乘法
+ *  复杂度：O(n^2)
+ */
+
+VI A, B;
+
+void mul(VI &A, VI &B, VI &C) {
+    for (int i = 0; i < A.size(); i++) {
+        for (int j = 0; j < B.size(); j++) {
+            C[i + j] += A[i] * B[j];
+            C[i + j + 1] += C[i][j] / 10;
+            C[i + j] %= 10;
+        }
+    }
+    while (C.size() > 1 && !C.back()) C.pop_back();
+}
+
+void solve() {
+    std::string a, b;
+    std::cin >> a >> b;
+    for (int i = a.size() - 1; ~i; i--) A.push_back(a[i] - '0');
+    for (int i = b.size() - 1; ~i; i--) B.push_back(b[i] - '0');
+    VI C(A.size() + B.size());
+    mul(A, B, C);
+    for (int i = C.size() - 1; ~i; i--) std::cout << C[i];
+}
+
+
+/**
+ * @brief 大数除法
+ *  大精度除以小精度
+ *  复杂度：O(n)
+ */
+
+VI A, C;
+int b;
+
+void div(VI &A, int b, VI &C) {
+    ll r = 0;
+    for (int i = A.size() - 1; ~i; i--) {
+        r = r * 10 + A[i];
+        C.push_back(r / b);
+        r %= b;
+    }
+    std::reverse(C.begin(), C.end());
+    while (C.size() > 1 && !C.back()) C.pop_back();
+}
+
+void solve() {
+    std::string a;
+    std::cin >> a >> b;
+    for (int i = a.size() - 1; ~i; i--) A.push_back(a[i] - '0');
+    div(A, b, C);
+    for (int i = C.size() - 1; ~i; i--) std::cout << C[i];
+}
+```
+
+
+
+
+
 ### 素性测试、约数枚举、整数分解
 
 ```c++
@@ -5145,6 +5283,50 @@ void solve() {
 
 
 ## 七、搜索
+
+### DFS
+
+
+
+### BFS
+
+
+
+### 树遍历
+
+#### 先序遍历
+
+<img src="sylvie233_templates.assets/image-20230211220907098.png" alt="image-20230211220907098" style="zoom:67%;" />
+
+
+
+#### 中序遍历
+
+<img src="sylvie233_templates.assets/image-20230211221757945.png" alt="image-20230211221757945" style="zoom:67%;" />
+
+
+
+#### 后序遍历
+
+<img src="sylvie233_templates.assets/image-20230211222504844.png" alt="image-20230211222504844" style="zoom:67%;" />
+
+
+
+### 记忆化搜索
+
+逆推：从下往上累加
+
+顺推：从上往下累加
+
+
+
+
+
+
+
+
+
+
 
 
 
