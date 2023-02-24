@@ -4089,6 +4089,41 @@ ll qpow(ll a, ll b, ll mod) {
     }
     return res;
 }
+
+
+/**
+ * @brief 高精度快速幂
+ *  计算 2^p - 1 的最后500位数字
+ *      p为(1000,3100000)
+ *  复杂度 O(N^2 * logp)
+ */
+
+const int N = 500;
+VI a(N), res(N);
+
+VI mul(VI &a, VI &b) {
+    VI t(N + 5);
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; i + j < N; j++) {
+            t[i + j] += a[i] * b[j];
+            t[i + j + 1] += t[i + j] / 10;
+            t[i + j] %= 10;
+        }
+    }
+    return t;
+}
+
+void quickpow(int p) {
+    res[0] = 1;
+    a[0] = 2;
+    while (p) {
+        if (p & 1) res = mul(res, a);
+        a = mul(a, a);
+        p >>= 1;
+    }
+    // 结果减1
+    res[0]--;
+}
 ```
 
 
@@ -4432,6 +4467,12 @@ ll f_china(int *a, int *n, int len) {
     return (ans % num + num) % num;
 }
 ```
+
+
+
+### 矩阵运算
+
+
 
 
 
