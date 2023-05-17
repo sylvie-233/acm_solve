@@ -5431,10 +5431,19 @@ for (int i = 0; i < n; i++) {
 
 
 
-#### 2.最长上升子序列
+#### 2.最长上升子序列(LIS)
 
 ```c++
+/*
+	dp[i]表示以a[i]为结尾的最长上升子序列长度
+		初始值: dp[i]=1
+	
+*/
+
+
+// O(n^2)
 int res = 0;
+
 for (int i = 0; i < n; i++) {
     dp[i] = 1;
     for (int j = 0; j < i; j++) {
@@ -5443,6 +5452,44 @@ for (int i = 0; i < n; i++) {
         }
         res = std::max(res, dp[i]);
     }
+}
+
+
+/*
+	二分查找优化
+		O(nlogn)
+*/
+
+int n =9;
+int a[101] = {0, 2, 5, 9, 4, 6, 7, 1, 7, 2}; // 下标从1开始
+int b[101]; // 记录最长子序列的长度的数组
+int len;
+
+// 二分查找第一个大于等于x的位置
+int find(int x) {
+    int L = 1, R = len, mid;
+    while (L <= R) {
+        mid = (L + R) / 2;
+        if (x > b[mid]) L = mid + 1;
+        else R = mid - 1;
+    }
+    return L;
+}
+
+int main() {
+    int i, j;
+    len = 1;
+    b[1] = a[1];
+    for (i = 2; i <= n; i++) {
+        if (a[i] > b[len]) {
+            b[++len] = a[i];
+        } else {
+            j = find(a[i]);
+            b[j] = a[i];
+        }
+    }
+    std::cout << len << std::endl;
+    return 0;
 }
 ```
 
