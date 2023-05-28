@@ -464,6 +464,10 @@ int main() {
 
 ### Splay
 
+#### Treap
+
+#### FHQ Treap
+
 
 
 ### LCT
@@ -508,12 +512,6 @@ int main() {
 
 
 
-### Treap
-
-#### FHQ Treap
-
-
-
 ### KD树
 
 
@@ -555,6 +553,29 @@ int main() {
 
 
 ### 欧几里得
+
+```
+int gcd(int a, int b) {
+	if (0 == b) return a;
+	return gcd(b, a % b);
+}
+```
+
+<img src="sylvie233_templates_new.assets/image-20230528171240527.png" alt="image-20230528171240527" style="zoom:67%;" />![image-20230528171828415](sylvie233_templates_new.assets/image-20230528171828415.png)
+
+<img src="sylvie233_templates_new.assets/image-20230528171240527.png" alt="image-20230528171240527" style="zoom:67%;" />![image-20230528171828415](sylvie233_templates_new.assets/image-20230528171828415.png)
+
+<img src="sylvie233_templates_new.assets/image-20230528172207939.png" alt="image-20230528172207939" style="zoom:67%;" />
+
+
+
+
+
+
+
+
+
+
 
 #### 类欧几里得
 
@@ -621,6 +642,12 @@ int main() {
 ### 中国剩余定理
 
 #### 扩展中国剩余定理
+
+
+
+### 素性测试
+
+
 
 
 
@@ -829,6 +856,12 @@ int main() {
 
 
 ### 区间DP
+
+
+
+
+
+### 状态压缩DP
 
 
 
