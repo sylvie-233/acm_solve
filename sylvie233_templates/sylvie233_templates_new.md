@@ -452,6 +452,22 @@ int main() {
 
 ### 并查集
 
+![image-20230530151329901](sylvie233_templates_new.assets/image-20230530151329901.png)
+
+![image-20230530151748402](sylvie233_templates_new.assets/image-20230530151748402.png)
+
+![image-20230530152034569](sylvie233_templates_new.assets/image-20230530152034569.png)
+
+
+
+
+
+
+
+
+
+
+
 #### 带权并查集
 
 
@@ -849,9 +865,75 @@ int gcd(int a, int b) {
 
 ### 一般DP
 
+#### LCS
+
+##### 最长公共子序列
+
+<img src="sylvie233_templates_new.assets/image-20230530100642010.png" alt="image-20230530100642010" style="zoom:67%;" />
+
+ <img src="sylvie233_templates_new.assets/image-20230530101014461.png" alt="image-20230530101014461" style="zoom:67%;" />
+
+<img src="sylvie233_templates_new.assets/image-20230530101813589.png" alt="image-20230530101813589" style="zoom:67%;" />
+
+<img src="sylvie233_templates_new.assets/image-20230530102006031.png" alt="image-20230530102006031" style="zoom:67%;" />
+
+
+
+##### 最长公共子串
+
+<img src="sylvie233_templates_new.assets/image-20230530102624685.png" alt="image-20230530102624685" style="zoom:67%;" />
+
+<img src="sylvie233_templates_new.assets/image-20230530102932655.png" alt="image-20230530102932655" style="zoom:67%;" />
+
+
+
+
+
+#### 编辑距离
+
+<img src="sylvie233_templates_new.assets/image-20230530141730241.png" alt="image-20230530141730241" style="zoom:67%;" />
+
+<img src="sylvie233_templates_new.assets/image-20230530142528168.png" alt="image-20230530142528168" style="zoom:67%;" />  
+
+<img src="sylvie233_templates_new.assets/image-20230530143039749.png" alt="image-20230530143039749" style="zoom:67%;" />
+
+滚动数组优化
+
+<img src="sylvie233_templates_new.assets/image-20230530143539026.png" alt="image-20230530143539026" style="zoom:67%;" />
+
+
+
+
+
+
+
 
 
 ### 背包问题
+
+#### 01背包
+
+<img src="sylvie233_templates_new.assets/image-20230530143924910.png" alt="image-20230530143924910" style="zoom:67%;" /><img src="sylvie233_templates_new.assets/image-20230530144208520.png" alt="image-20230530144208520" />![image-20230530145309953](sylvie233_templates_new.assets/image-20230530145309953.png)
+
+<img src="sylvie233_templates_new.assets/image-20230530145507481.png" alt="image-20230530145507481" style="zoom:67%;" />
+
+
+
+#### 完全背包
+
+![image-20230530145827571](sylvie233_templates_new.assets/image-20230530145827571.png)
+
+<img src="sylvie233_templates_new.assets/image-20230530150228774.png" alt="image-20230530150228774" style="zoom:67%;" />
+
+![image-20230530150748226](sylvie233_templates_new.assets/image-20230530150748226.png)
+
+
+
+
+
+
+
+
 
 
 
@@ -870,6 +952,14 @@ int gcd(int a, int b) {
 
 
 ### 树形DP
+
+
+
+
+
+### 概率DP
+
+
 
 
 
@@ -1218,6 +1308,8 @@ int gcd(int a, int b) {
 
 
 ### STL
+
+![image-20230530152142597](sylvie233_templates_new.assets/image-20230530152142597.png)
 
 
 
