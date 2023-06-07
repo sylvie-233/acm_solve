@@ -52,7 +52,49 @@
 
 #### 强连通分量
 
-##### 强连通分支及其缩点
+##### Tarjan
+
+![image-20230607143849254](sylvie233_templates_new.assets/image-20230607143849254.png)
+
+![image-20230607150034189](sylvie233_templates_new.assets/image-20230607150034189.png)
+
+![image-20230607150104323](sylvie233_templates_new.assets/image-20230607150104323.png)
+
+
+
+
+
+##### Tarjan SCC缩点
+
+![image-20230607152312473](sylvie233_templates_new.assets/image-20230607152312473.png)
+
+
+
+**校园网络**
+
+![image-20230607150908569](sylvie233_templates_new.assets/image-20230607150908569.png)
+
+![image-20230607150950897](sylvie233_templates_new.assets/image-20230607150950897.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### 强连通分支
+
+
 
 
 
@@ -62,19 +104,41 @@
 
 #### 图的割边和割点
 
-##### 最小割
+##### Tarjan割点
+
+![image-20230607153257535](sylvie233_templates_new.assets/image-20230607153257535.png)
+
+![image-20230607153854408](sylvie233_templates_new.assets/image-20230607153854408.png)
+
+![image-20230607154224450](sylvie233_templates_new.assets/image-20230607154224450.png)
 
 
 
-##### 网络流规约
+##### Tarjan割边
+
+![image-20230607155745195](sylvie233_templates_new.assets/image-20230607155745195.png)
+
+![image-20230607160914303](sylvie233_templates_new.assets/image-20230607160914303.png)
+
+![image-20230607161338394](sylvie233_templates_new.assets/image-20230607161338394.png)
+
+![image-20230607161858612](sylvie233_templates_new.assets/image-20230607161858612.png)
+
+
+
+
+
+
+
+
+
+
 
 
 
 #### 2-SAT
 
 
-
-### Tarjan
 
 
 
@@ -124,13 +188,53 @@
 
 
 
-### 二分图匹配
+### 二分图
+
+#### 二分图判定
+
+![image-20230607114728970](sylvie233_templates_new.assets/image-20230607114728970.png)
+
+![image-20230607115112236](sylvie233_templates_new.assets/image-20230607115112236.png)
+
+
+
+
+
+
+
+
 
 #### 匈牙利算法
+
+![image-20230607120159619](sylvie233_templates_new.assets/image-20230607120159619.png)
+
+![image-20230607120406353](sylvie233_templates_new.assets/image-20230607120406353.png)
+
+![image-20230607120930745](sylvie233_templates_new.assets/image-20230607120930745.png)
+
+![image-20230607121213957](sylvie233_templates_new.assets/image-20230607121213957.png)
 
 
 
 #### KM算法
+
+![image-20230607121944715](sylvie233_templates_new.assets/image-20230607121944715.png)
+
+![image-20230607122642861](sylvie233_templates_new.assets/image-20230607122642861.png)
+
+![image-20230607124455358](sylvie233_templates_new.assets/image-20230607124455358.png)
+
+
+
+
+
+#### Dinic算法
+
+二分图转为网络流模型
+
+
+
+
 
 
 
@@ -240,6 +344,58 @@
 
 ### 链式前向星
 
+```
+
+```
+
+![image-20230607083618297](sylvie233_templates_new.assets/image-20230607083618297.png)
+
+
+
+
+
+
+
+
+
+![image-20230607081244249](sylvie233_templates_new.assets/image-20230607081244249.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 邻接矩阵
+
+![image-20230607081613480](sylvie233_templates_new.assets/image-20230607081613480.png)
+
+
+
+#### 边集数组
+
+![image-20230607082041173](sylvie233_templates_new.assets/image-20230607082041173.png)
+
+
+
+#### 邻接表
+
+![image-20230607082406326](sylvie233_templates_new.assets/image-20230607082406326.png)
+
+
+
+#### 链式邻接表
+
+![image-20230607082909806](sylvie233_templates_new.assets/image-20230607082909806.png)
+
+
+
 
 
 ### bitset
@@ -274,6 +430,129 @@
 
 #### CDQ分治
 
+```
+/*
+	luogu P3810 三维偏序个数
+
+*/
+
+#include <iostream>
+#include <algorithm>
+
+const int N = 2e5 + 5;
+
+struct node {
+	int a, b, c, cnt, ans;
+} s1[N], s2[N];
+
+int n, k, cnt, m, c[N], ans[N];
+
+// 树状数组
+void add(int x, int y) {
+    while (x <= k) {
+        c[x] += y;
+        x += x & (-x);
+    }
+}
+
+int ask(int x) {
+    int res =0;
+    while (x > 0) {
+        res += c[x];
+        x -= x & (-x);
+    }
+    return res;
+}
+
+// CDQ分治
+void cdq(int l, int r) {
+    if (l == r) return;
+    int mid = (l + r) >> 1;
+    // 左边对左边收益、右边对右边收益
+    cdq(l, mid);
+    cdq(mid + 1, r);
+
+    // 第二维排序
+    auto cmp2 = [](const node& a, const node& b) {
+        if (a.b == b.b) {
+            return a.c < b.c;
+        }
+        return a.b < b.b;
+    };
+    std::sort(s2 + l, s2 + mid + 1, cmp2);
+    std::sort(s2 + mid + 1, s2 + r + 1, cmp2);
+
+    // 右边对左边收益（左边不可能对右边收益：左边第一维小）
+    int j = l;
+    for (int i = mid + 1; i <= r; i++) {
+        while (s2[i].b >= s2[j].b && j <= mid) {
+            add(s2[j].c, s2[j].cnt);
+            j++;
+        }
+        s2[i].ans += ask(s2[i].c);
+    } 
+    for (int i = l; i < j; i++) 
+        add(s2[i].c, -s2[i].cnt); // 清空
+}
+
+
+
+
+int main() {
+    std::cin >> n >> k;
+    for (int i = 1; i <= n; i++) 
+        std::cin >> s1[i].a >> s1[i].b >> s1[i].c;
+
+
+    auto cmp1 = [](const node& a, const node& b) {
+        if (a.a == b.a) {
+            if (a.b == b.b) return a.c < b.c;
+            return a.b < b.b;
+        }
+        return a.a < b.a;
+    };
+    // 第一维排序
+    std::sort(s1 + 1, s1 + 1 +n, cmp1);
+
+    // 去除处理
+    for (int i = 1; i <= n; i++) {
+        cnt++;
+        if (s1[i].a != s1[i + 1].a || s1[i].b != s1[i + 1].b || s1[i].c != s1[i + 1].c) {
+            m++;
+            s2[m] = s1[i];
+            s2[m].cnt = cnt;
+            cnt = 0;
+        }
+    }
+
+    // CDQ分治
+    cdq(1, m);
+
+    for (int i = 1; i <= m; i++) {
+        ans[s2[i].ans + s2[i].cnt - 1] += s2[i].cnt;
+    }
+
+    for (int i = 0; i < n; i++)
+        std::cout << ans[i] << '\n';
+
+	return 0;
+}
+```
+
+
+
+![image-20230607132647044](sylvie233_templates_new.assets/image-20230607132647044.png)
+
+![image-20230607132518116](sylvie233_templates_new.assets/image-20230607132518116.png)
+
+
+
+
+
+
+
+
+
 
 
 ### 树
@@ -303,6 +582,38 @@
 
 
 ### 线段树
+
+![image-20230607124949567](sylvie233_templates_new.assets/image-20230607124949567.png)
+
+![image-20230607125600904](sylvie233_templates_new.assets/image-20230607125600904.png)
+
+![image-20230607125703516](sylvie233_templates_new.assets/image-20230607125703516.png)
+
+![image-20230607125811073](sylvie233_templates_new.assets/image-20230607125811073.png)
+
+
+
+![image-20230607130616119](sylvie233_templates_new.assets/image-20230607130616119.png)
+
+![image-20230607132045729](sylvie233_templates_new.assets/image-20230607132045729.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #### 离散线段树
 
@@ -427,6 +738,14 @@ int main() {
 
 
 ### 主席树
+
+
+
+
+
+### ST表
+
+
 
 
 
@@ -805,15 +1124,87 @@ int gcd(int a, int b) {
 
 ### 字典树
 
+![image-20230607095435517](sylvie233_templates_new.assets/image-20230607095435517.png)
+
+![image-20230607095448448](sylvie233_templates_new.assets/image-20230607095448448.png)
+
+![image-20230607100101404](sylvie233_templates_new.assets/image-20230607100101404.png)
+
+![image-20230607100156630](sylvie233_templates_new.assets/image-20230607100156630.png)
+
+
+
+
+
+#### 01字典树
+
+![image-20230607100420496](sylvie233_templates_new.assets/image-20230607100420496.png)
+
+![image-20230607100849676](sylvie233_templates_new.assets/image-20230607100849676.png)
+
+![image-20230607102258937](sylvie233_templates_new.assets/image-20230607102258937.png)
+
+
+
+
+
 
 
 ### KMP
 
+![image-20230607091125302](sylvie233_templates_new.assets/image-20230607091125302.png)
+
+相同前后缀的最大长度
+
+![image-20230607091926899](sylvie233_templates_new.assets/image-20230607091926899.png)
+
+
+
+![image-20230607091954897](sylvie233_templates_new.assets/image-20230607091954897.png)
+
+
+
+
+
+
+
+
+
 #### 扩展KMP
+
+![image-20230607092124413](sylvie233_templates_new.assets/image-20230607092124413.png)
+
+![image-20230607093136872](sylvie233_templates_new.assets/image-20230607093136872.png)
+
+![image-20230607093501667](sylvie233_templates_new.assets/image-20230607093501667.png)
+
+![image-20230607094021225](sylvie233_templates_new.assets/image-20230607094021225.png)
+
+
 
 
 
 ### 哈希
+
+![image-20230607090021678](sylvie233_templates_new.assets/image-20230607090021678.png)
+
+![image-20230607090211276](sylvie233_templates_new.assets/image-20230607090211276.png)
+
+
+
+
+
+#### 最小表示法
+
+![image-20230607085049060](sylvie233_templates_new.assets/image-20230607085049060.png)
+
+![image-20230607085806300](sylvie233_templates_new.assets/image-20230607085806300.png)
+
+
+
+
+
+
 
 
 
@@ -826,6 +1217,20 @@ int gcd(int a, int b) {
 
 
 ### 马拉车
+
+![image-20230607094228391](sylvie233_templates_new.assets/image-20230607094228391.png)
+
+![image-20230607094703134](sylvie233_templates_new.assets/image-20230607094703134.png)
+
+![image-20230607094909292](sylvie233_templates_new.assets/image-20230607094909292.png)
+
+![image-20230607095217009](sylvie233_templates_new.assets/image-20230607095217009.png)
+
+
+
+![image-20230607095315986](sylvie233_templates_new.assets/image-20230607095315986.png)
+
+
 
 
 
@@ -939,19 +1344,75 @@ int gcd(int a, int b) {
 
 ### 区间DP
 
+#### 石子合并
+
+<img src="sylvie233_templates_new.assets/image-20230607105420620.png" alt="image-20230607105420620" style="zoom:67%;" />
+
+![image-20230607105756233](sylvie233_templates_new.assets/image-20230607105756233.png)
+
+![image-20230607110033261](sylvie233_templates_new.assets/image-20230607110033261.png)
+
+<img src="sylvie233_templates_new.assets/image-20230607110324906.png" alt="image-20230607110324906" style="zoom:67%;" />
+
+
+
+
+
+
+
+
+
 
 
 
 
 ### 状态压缩DP
 
+#### 玉米田
+
+![image-20230607103854647](sylvie233_templates_new.assets/image-20230607103854647.png)
+
+![image-20230607104303010](sylvie233_templates_new.assets/image-20230607104303010.png)
+
+![image-20230607105105000](sylvie233_templates_new.assets/image-20230607105105000.png)
+
+
+
 
 
 ### 数位DP
 
+#### Windy数
+
+![image-20230607112512152](sylvie233_templates_new.assets/image-20230607112512152.png)
+
+![image-20230607112912841](sylvie233_templates_new.assets/image-20230607112912841.png)
+
+![image-20230607113423672](sylvie233_templates_new.assets/image-20230607113423672.png)
+
+![image-20230607114208427](sylvie233_templates_new.assets/image-20230607114208427.png)
+
 
 
 ### 树形DP
+
+#### 没有上司的舞会
+
+![image-20230607102512726](sylvie233_templates_new.assets/image-20230607102512726.png)
+
+![image-20230607102837998](sylvie233_templates_new.assets/image-20230607102837998.png)
+
+![image-20230607103426063](sylvie233_templates_new.assets/image-20230607103426063.png)
+
+![image-20230607103642083](sylvie233_templates_new.assets/image-20230607103642083.png)
+
+
+
+
+
+
+
+
 
 
 
