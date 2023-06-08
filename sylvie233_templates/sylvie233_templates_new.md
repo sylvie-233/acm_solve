@@ -178,6 +178,22 @@
 
 #### 最大流
 
+##### EK算法
+
+![image-20230608114530680](sylvie233_templates_new.assets/image-20230608114530680.png)
+
+![image-20230608115128413](sylvie233_templates_new.assets/image-20230608115128413.png)
+
+![image-20230608120304685](sylvie233_templates_new.assets/image-20230608120304685.png)
+
+
+
+
+
+
+
+
+
 
 
 #### 最小割
@@ -1479,6 +1495,26 @@ int gcd(int a, int b) {
 
 ### 后缀自动机
 
+![image-20230608100654510](sylvie233_templates_new.assets/image-20230608100654510.png)
+
+![image-20230608102031974](sylvie233_templates_new.assets/image-20230608102031974.png)
+
+![image-20230608104115081](sylvie233_templates_new.assets/image-20230608104115081.png)
+
+![image-20230608104756737](sylvie233_templates_new.assets/image-20230608104756737.png)
+
+![image-20230608105203236](sylvie233_templates_new.assets/image-20230608105203236.png)
+
+![image-20230608105317292](sylvie233_templates_new.assets/image-20230608105317292.png)
+
+![image-20230608105331638](sylvie233_templates_new.assets/image-20230608105331638.png)
+
+
+
+
+
+
+
 #### 广义后缀自动机
 
 
@@ -1505,6 +1541,24 @@ int gcd(int a, int b) {
 
 ### AC自动机
 
+基于字典树、构造类似KMP
+
+![image-20230608092351541](sylvie233_templates_new.assets/image-20230608092351541.png)
+
+![image-20230608093828812](sylvie233_templates_new.assets/image-20230608093828812.png)
+
+沿着回跳边寻找所有匹配的后缀字符串
+
+![image-20230608094630538](sylvie233_templates_new.assets/image-20230608094630538.png)
+
+![image-20230608094821082](sylvie233_templates_new.assets/image-20230608094821082.png)
+
+![image-20230608094900420](sylvie233_templates_new.assets/image-20230608094900420.png)
+
+
+
+
+
 
 
 ### 回文自动机
@@ -1514,6 +1568,28 @@ int gcd(int a, int b) {
 
 
 ### 后缀数组
+
+相邻后缀的最长公共前缀长度
+
+![image-20230608105837039](sylvie233_templates_new.assets/image-20230608105837039.png)
+
+![image-20230608112236411](sylvie233_templates_new.assets/image-20230608112236411.png)
+
+<img src="sylvie233_templates_new.assets/image-20230608112433896.png" alt="image-20230608112433896" style="zoom:67%;" />
+
+![image-20230608113524388](sylvie233_templates_new.assets/image-20230608113524388.png)
+
+![image-20230608113826972](sylvie233_templates_new.assets/image-20230608113826972.png)
+
+![image-20230608113847091](sylvie233_templates_new.assets/image-20230608113847091.png)
+
+
+
+
+
+
+
+
 
 
 
