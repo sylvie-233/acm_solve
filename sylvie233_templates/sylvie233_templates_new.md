@@ -416,6 +416,22 @@
 
 ### bitset
 
+```
+bitset:
+	any():
+	count():
+	flip():
+	none():
+	reset():
+	set():
+	size():
+	to_string():
+	to_ulong():
+	to_ullong():
+```
+
+
+
 
 
 ### 栈
@@ -990,6 +1006,40 @@ void init() {
 
 ### 树链剖分
 
+#### 最近公共祖先
+
+![image-20230608192608509](sylvie233_templates_new.assets/image-20230608192608509.png)
+
+![image-20230608193342976](sylvie233_templates_new.assets/image-20230608193342976.png)
+
+![image-20230608193359153](sylvie233_templates_new.assets/image-20230608193359153.png)
+
+
+
+
+
+#### 树上修改、查询
+
+![image-20230608193806268](sylvie233_templates_new.assets/image-20230608193806268.png)
+
+![image-20230608194247484](sylvie233_templates_new.assets/image-20230608194247484.png)
+
+![image-20230608194634914](sylvie233_templates_new.assets/image-20230608194634914.png)
+
+![image-20230608194816505](sylvie233_templates_new.assets/image-20230608194816505.png)
+
+![image-20230608194951399](sylvie233_templates_new.assets/image-20230608194951399.png)
+
+![image-20230608195019393](sylvie233_templates_new.assets/image-20230608195019393.png)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1116,6 +1166,20 @@ void init() {
 
 ### 贝祖定理
 
+裴蜀定理
+
+![image-20230609165349689](sylvie233_templates_new.assets/image-20230609165349689.png)
+
+![image-20230609165503215](sylvie233_templates_new.assets/image-20230609165503215.png)
+
+![image-20230609165517578](sylvie233_templates_new.assets/image-20230609165517578.png)
+
+
+
+
+
+
+
 
 
 
@@ -1151,6 +1215,14 @@ int gcd(int a, int b) {
 
 #### 扩展欧几里得
 
+![image-20230609170049208](sylvie233_templates_new.assets/image-20230609170049208.png)
+
+![image-20230609170414516](sylvie233_templates_new.assets/image-20230609170414516.png)
+
+![image-20230609170458792](sylvie233_templates_new.assets/image-20230609170458792.png)
+
+
+
 
 
 
@@ -1169,7 +1241,23 @@ int gcd(int a, int b) {
 
 
 
-### 同余运算
+### 同余
+
+#### 逆元
+
+扩展欧几里得求乘法逆元
+
+![image-20230609170744849](sylvie233_templates_new.assets/image-20230609170744849.png)
+
+![image-20230609170912380](sylvie233_templates_new.assets/image-20230609170912380.png)
+
+![image-20230609171509564](sylvie233_templates_new.assets/image-20230609171509564.png)
+
+
+
+
+
+
 
 #### 指数同余方程
 
@@ -1181,27 +1269,37 @@ int gcd(int a, int b) {
 
 
 
-
-
-### 模运算
-
-#### 组合数取模
-
-
-
-
-
 ### 二次剩余
 
 
 
 ### 威尔逊定理
 
+![image-20230609164255420](sylvie233_templates_new.assets/image-20230609164255420.png)
 
+![image-20230609164735490](sylvie233_templates_new.assets/image-20230609164735490.png)
+
+![image-20230609164746479](sylvie233_templates_new.assets/image-20230609164746479.png)
 
 
 
 ### 欧拉定理
+
+![image-20230609162940716](sylvie233_templates_new.assets/image-20230609162940716.png)
+
+
+
+
+
+
+
+
+
+#### 扩展欧拉定理
+
+![image-20230609163612765](sylvie233_templates_new.assets/image-20230609163612765.png)
+
+![image-20230609163729753](sylvie233_templates_new.assets/image-20230609163729753.png)
 
 
 
@@ -1315,7 +1413,11 @@ int gcd(int a, int b) {
 
 ### 费马小定理
 
+![image-20230609162024423](sylvie233_templates_new.assets/image-20230609162024423.png)
 
+![image-20230609162215642](sylvie233_templates_new.assets/image-20230609162215642.png)
+
+![image-20230609162406116](sylvie233_templates_new.assets/image-20230609162406116.png)
 
 
 
@@ -1356,6 +1458,20 @@ int gcd(int a, int b) {
 
 
 ### 莫比乌斯函数
+
+#### 线性筛
+
+![image-20230609160800177](sylvie233_templates_new.assets/image-20230609160800177.png)
+
+![image-20230609161143280](sylvie233_templates_new.assets/image-20230609161143280.png)
+
+
+
+
+
+
+
+
 
 #### 莫比乌斯反演
 
@@ -2078,6 +2194,28 @@ int gcd(int a, int b) {
 
 
 ### 二分
+
+![image-20230609172142744](sylvie233_templates_new.assets/image-20230609172142744.png)
+
+
+
+开区间模板
+
+![xxx](sylvie233_templates_new.assets/image-20230609172549964.png)
+
+![image-20230609172915592](sylvie233_templates_new.assets/image-20230609172915592.png)
+
+![image-20230609173100532](sylvie233_templates_new.assets/image-20230609173100532.png)
+
+![image-20230609173557620](sylvie233_templates_new.assets/image-20230609173557620.png)
+
+
+
+
+
+
+
+
 
 #### 三分
 
