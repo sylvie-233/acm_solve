@@ -1166,6 +1166,12 @@ void init() {
 
 ### 贝祖定理
 
+![image-20230611173011876](sylvie233_templates_new.assets/image-20230611173011876.png)
+
+
+
+
+
 裴蜀定理
 
 ![image-20230609165349689](sylvie233_templates_new.assets/image-20230609165349689.png)
@@ -1307,7 +1313,23 @@ int gcd(int a, int b) {
 
 ### 中国剩余定理
 
+![image-20230611171254698](sylvie233_templates_new.assets/image-20230611171254698.png)
+
+![image-20230611171543102](sylvie233_templates_new.assets/image-20230611171543102.png)
+
+![image-20230611171811917](sylvie233_templates_new.assets/image-20230611171811917.png)
+
+
+
 #### 扩展中国剩余定理
+
+![image-20230611172210733](sylvie233_templates_new.assets/image-20230611172210733.png)
+
+![image-20230611172548586](sylvie233_templates_new.assets/image-20230611172548586.png)
+
+![image-20230611173047138](sylvie233_templates_new.assets/image-20230611173047138.png)
+
+
 
 
 
