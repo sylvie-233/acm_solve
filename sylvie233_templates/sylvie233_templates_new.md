@@ -1419,11 +1419,27 @@ int gcd(int a, int b) {
 
 ### BSGS
 
+![image-20230615113937841](sylvie233_templates_new.assets/image-20230615113937841.png)
+
+![image-20230615114024223](sylvie233_templates_new.assets/image-20230615114024223.png)
+
+![image-20230615114306571](sylvie233_templates_new.assets/image-20230615114306571.png)
+
+
+
+
+
+
+
+
+
 #### EXBSGS
 
+![image-20230615114813075](sylvie233_templates_new.assets/image-20230615114813075.png)
 
+![image-20230615115052544](sylvie233_templates_new.assets/image-20230615115052544.png)
 
-
+![image-20230615115621342](sylvie233_templates_new.assets/image-20230615115621342.png)
 
 
 
