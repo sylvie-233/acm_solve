@@ -1547,6 +1547,34 @@ int gcd(int a, int b) {
 
 ### 高斯消元
 
+#### 线性方程组
+
+![image-20230617213307106](sylvie233_templates_new.assets/image-20230617213307106.png)
+
+![image-20230617213508950](sylvie233_templates_new.assets/image-20230617213508950.png)
+
+![image-20230617213933671](sylvie233_templates_new.assets/image-20230617213933671.png)
+
+![image-20230617214246241](sylvie233_templates_new.assets/image-20230617214246241.png)
+
+![image-20230617214538460](sylvie233_templates_new.assets/image-20230617214538460.png)
+
+
+
+
+
+#### 矩阵求逆
+
+![image-20230617214832313](sylvie233_templates_new.assets/image-20230617214832313.png)
+
+![image-20230617215602999](sylvie233_templates_new.assets/image-20230617215602999.png)
+
+![image-20230617215743388](sylvie233_templates_new.assets/image-20230617215743388.png)
+
+
+
+
+
 
 
 
