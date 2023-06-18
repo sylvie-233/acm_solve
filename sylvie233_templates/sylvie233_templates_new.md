@@ -354,6 +354,190 @@
 
 ### 分块
 
+#### 区间更新、单点查询
+
+```
+/**
+ * @brief 区间更新，单点查询
+ *  数据范围：1~n
+ */
+int n, len, id[N], lazy[N], data[N];
+
+void add(int l, int r, int v) {
+    for (int i = l; i <= std::min(id[l] * len, r); i++) {
+        data[i] += v;
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            data[i] += v;
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        lazy[i] += v;
+    }
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1; 
+    }
+    // data[i] + lazy[id[i]]
+}
+```
+
+
+
+
+
+#### 区间更新、区间查询小于x的元素的个数
+
+```
+/**
+ * @brief 区间更新，查询区间内小于x的元素的个数
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy[N];
+std::vector<int> bkt[M];
+int n, d[N];
+
+void reset(int x) {
+    bkt[x].clear();
+    for (int i = (x - 1) * len + 1; i < std::min(x * len, n); i++) {
+        bkt[x].push_back(d[i]);
+    }
+    std::sort(bkt[x].begin(), bkt[x].end());
+}
+
+void add(int l, int r, int v) {
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        d[i] += v;
+    }
+    reset(id[l]);
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            d[i] += v;
+        }
+        reset(id[r]);
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        lazy[i] += v;
+    }
+}
+
+int query(int l, int r, int v) {
+    int res = 0;
+    for (int i = l; i <= std::min(id[l] * len, r); i++) {
+        if (d[i] + lazy[id[l]] < v) {
+            res++;
+        }
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            if (d[i] + lazy[id[r]] < v) {
+                res++;
+            }
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        int x = v - lazy[i];
+        res += std::lower_bound(bkt[i].begin(), bkt[i].end(), x) - bkt[i].begin();
+    }
+    return res;
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+        bkt[id[i]].push_back(d[i]);
+    }
+    for (int i = 1; i <= id[n]; i++) {
+        std::sort(bkt[i].begin(), bkt[i].end());
+    }
+}
+```
+
+
+
+
+
+#### 区间更新、区间查询小于x的最大值
+
+```
+/**
+ * @brief 区间更新，查询区间小于x的最大值
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy[N];
+std::set<int> st[M];
+int n, d[N];
+
+void add(int l, int r, int v) {
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        st[id[l]].erase(d[i]);
+        d[i] += v;
+        st[id[l]].insert(d[i]);
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            st[id[r]].erase(d[i]);
+            d[i] += v;
+            st[id[r]].insert(d[i]);
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        lazy[i] += v;
+    }
+}
+
+int query(int l, int r, int v) {
+    int res = -1;
+    for (int i = l; i <= std::min(id[l] * len, r); i++) {
+        if (d[i] + lazy[id[l]] < v) {
+            res = std::max(res, d[i] + lazy[id[l]]);
+        }
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            if (d[i] + lazy[id[r]] < v) {
+                res = std::max(res, d[i] + lazy[id[r]]);
+            }
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        auto it = st[i].lower_bound(v - lazy[i]);
+        if (it == st[i].begin()) {
+            continue;
+        }
+        res = std::max(res, *(--it) + lazy[i]);
+    }
+    return res;
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+        st[id[i]].insert(d[i]);
+    }
+}
+```
+
+
+
+#### 区间更新、区间求和
+
+```
+
+```
+
+
+
+
+
 
 
 
@@ -451,6 +635,22 @@ bitset:
 
 
 #### 单调队列
+
+##### 滑动窗口最值
+
+![image-20230618100644229](sylvie233_templates_new.assets/image-20230618100644229.png)
+
+![image-20230618101215177](sylvie233_templates_new.assets/image-20230618101215177.png)
+
+![image-20230618101336768](sylvie233_templates_new.assets/image-20230618101336768.png)
+
+
+
+
+
+
+
+​	
 
 
 
@@ -1861,6 +2061,16 @@ int gcd(int a, int b) {
 
 
 
+#### 多重背包
+
+![image-20230618095327658](sylvie233_templates_new.assets/image-20230618095327658.png)
+
+![image-20230618095528085](sylvie233_templates_new.assets/image-20230618095528085.png)
+
+##### 二进制优化
+
+![image-20230618100150170](sylvie233_templates_new.assets/image-20230618100150170.png)
+
 
 
 
@@ -1995,6 +2205,48 @@ int gcd(int a, int b) {
 
 
 
+![image-20230618085627953](sylvie233_templates_new.assets/image-20230618085627953.png)
+
+![image-20230618085708535](sylvie233_templates_new.assets/image-20230618085708535.png)
+
+
+
+#### 快速幂求组合数
+
+![image-20230618090250326](sylvie233_templates_new.assets/image-20230618090250326.png)
+
+![image-20230618090428268](sylvie233_templates_new.assets/image-20230618090428268.png)
+
+
+
+#### 卢卡斯定理
+
+![image-20230618090759408](sylvie233_templates_new.assets/image-20230618090759408.png)
+
+![image-20230618091129549](sylvie233_templates_new.assets/image-20230618091129549.png)
+
+
+
+#### 线性筛求组合数
+
+![image-20230618091658877](sylvie233_templates_new.assets/image-20230618091658877.png)
+
+![image-20230618092156221](sylvie233_templates_new.assets/image-20230618092156221.png)
+
+
+
+#### 隔板法
+
+![image-20230618092425318](sylvie233_templates_new.assets/image-20230618092425318.png)
+
+![image-20230618093157427](sylvie233_templates_new.assets/image-20230618093157427.png)
+
+
+
+
+
+
+
 
 
 ### 二项式定理
@@ -2012,6 +2264,30 @@ int gcd(int a, int b) {
 
 
 ### 容斥原理
+
+#### 集合的并
+
+![image-20230618093417048](sylvie233_templates_new.assets/image-20230618093417048.png)
+
+![image-20230618094300829](sylvie233_templates_new.assets/image-20230618094300829.png)
+
+
+
+
+
+#### 集合的交
+
+![image-20230618094507951](sylvie233_templates_new.assets/image-20230618094507951.png)
+
+![image-20230618094937032](sylvie233_templates_new.assets/image-20230618094937032.png)
+
+![image-20230618095136369](sylvie233_templates_new.assets/image-20230618095136369.png)
+
+
+
+
+
+
 
 
 
