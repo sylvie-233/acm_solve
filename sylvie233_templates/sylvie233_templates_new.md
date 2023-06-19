@@ -1717,9 +1717,45 @@ int gcd(int a, int b) {
 
 ### 迪利克雷卷积
 
+![image-20230619225337673](sylvie233_templates_new.assets/image-20230619225337673.png)
+
+![image-20230619225640984](sylvie233_templates_new.assets/image-20230619225640984.png)
+
+![image-20230619225821901](sylvie233_templates_new.assets/image-20230619225821901.png)
+
+![image-20230619230013205](sylvie233_templates_new.assets/image-20230619230013205.png)
+
+![image-20230619230219004](sylvie233_templates_new.assets/image-20230619230219004.png)
+
+![image-20230619230730634](sylvie233_templates_new.assets/image-20230619230730634.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ### 整除分块
+
+![image-20230619220117081](sylvie233_templates_new.assets/image-20230619220117081.png)
+
+![](sylvie233_templates_new.assets/image-20230619220408855.png)
+
+![image-20230619220507000](sylvie233_templates_new.assets/image-20230619220507000.png)
+
+
+
+
+
+#### 合式变化
 
 
 
@@ -2303,6 +2339,22 @@ int gcd(int a, int b) {
 
 
 
+
+
+#### 卡特兰数
+
+![image-20230619215029711](sylvie233_templates_new.assets/image-20230619215029711.png)
+
+![image-20230619215436879](sylvie233_templates_new.assets/image-20230619215436879.png)
+
+![image-20230619215521125](sylvie233_templates_new.assets/image-20230619215521125.png)
+
+
+
+
+
+
+
 #### 第一类斯特林数
 
 
@@ -2314,6 +2366,68 @@ int gcd(int a, int b) {
 
 
 ### 生成函数
+
+![image-20230619224221114](sylvie233_templates_new.assets/image-20230619224221114.png)
+
+![image-20230619224831851](sylvie233_templates_new.assets/image-20230619224831851.png)
+
+![image-20230619225053142](sylvie233_templates_new.assets/image-20230619225053142.png)
+
+![image-20230619225108040](sylvie233_templates_new.assets/image-20230619225108040.png)
+
+
+
+
+
+
+
+
+
+#### 普通生成函数
+
+![image-20230619220852682](sylvie233_templates_new.assets/image-20230619220852682.png)
+
+![image-20230619221224789](sylvie233_templates_new.assets/image-20230619221224789.png)
+
+![image-20230619221737448](sylvie233_templates_new.assets/image-20230619221737448.png)
+
+![image-20230619222419548](sylvie233_templates_new.assets/image-20230619222419548.png)
+
+![image-20230619222812578](sylvie233_templates_new.assets/image-20230619222812578.png)
+
+
+
+
+
+
+
+
+
+#### 指数生成函数
+
+![image-20230619223202174](sylvie233_templates_new.assets/image-20230619223202174.png)
+
+![image-20230619223359890](sylvie233_templates_new.assets/image-20230619223359890.png)
+
+![image-20230619223605147](sylvie233_templates_new.assets/image-20230619223605147.png)
+
+![image-20230619223840404](sylvie233_templates_new.assets/image-20230619223840404.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
