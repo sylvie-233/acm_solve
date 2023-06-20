@@ -1591,6 +1591,26 @@ int gcd(int a, int b) {
 
 #### 杜教筛
 
+![image-20230620104411444](sylvie233_templates_new.assets/image-20230620104411444.png)
+
+![image-20230620104536715](sylvie233_templates_new.assets/image-20230620104536715.png)
+
+![image-20230620104657535](sylvie233_templates_new.assets/image-20230620104657535.png)
+
+![image-20230620105043118](sylvie233_templates_new.assets/image-20230620105043118.png)
+
+![image-20230620105258964](sylvie233_templates_new.assets/image-20230620105258964.png)
+
+![image-20230620105356198](sylvie233_templates_new.assets/image-20230620105356198.png)
+
+![image-20230620105746422](sylvie233_templates_new.assets/image-20230620105746422.png)
+
+
+
+
+
+
+
 
 
 #### Min25筛
@@ -1713,6 +1733,26 @@ int gcd(int a, int b) {
 
 #### 莫比乌斯反演
 
+![image-20230620102136617](sylvie233_templates_new.assets/image-20230620102136617.png)
+
+![image-20230620102450231](sylvie233_templates_new.assets/image-20230620102450231.png)
+
+![image-20230620102624764](sylvie233_templates_new.assets/image-20230620102624764.png)
+
+![image-20230620103202758](sylvie233_templates_new.assets/image-20230620103202758.png)
+
+![image-20230620103544596](sylvie233_templates_new.assets/image-20230620103544596.png)
+
+![image-20230620104022024](sylvie233_templates_new.assets/image-20230620104022024.png)
+
+
+
+
+
+
+
+
+
 
 
 ### 迪利克雷卷积
@@ -1755,13 +1795,69 @@ int gcd(int a, int b) {
 
 
 
-#### 合式变化
+#### 合式变换
+
+![image-20230620095349682](sylvie233_templates_new.assets/image-20230620095349682.png)
+
+![image-20230620095941265](sylvie233_templates_new.assets/image-20230620095941265.png)
+
+![image-20230620100153078](sylvie233_templates_new.assets/image-20230620100153078.png)
+
+![image-20230620100540535](sylvie233_templates_new.assets/image-20230620100540535.png)
+
+![image-20230620100716953](sylvie233_templates_new.assets/image-20230620100716953.png)
+
+![image-20230620101242069](sylvie233_templates_new.assets/image-20230620101242069.png)
+
+![image-20230620101408319](sylvie233_templates_new.assets/image-20230620101408319.png)
+
+![image-20230620101422578](sylvie233_templates_new.assets/image-20230620101422578.png)
+
+
+
+
+
+
+
+
 
 
 
 
 
 ### FFT
+
+![image-20230620105951901](sylvie233_templates_new.assets/image-20230620105951901.png)
+
+![image-20230620110358838](sylvie233_templates_new.assets/image-20230620110358838.png)
+
+![image-20230620110544752](sylvie233_templates_new.assets/image-20230620110544752.png)
+
+![image-20230620111316310](sylvie233_templates_new.assets/image-20230620111316310.png)
+
+![image-20230620111516702](sylvie233_templates_new.assets/image-20230620111516702.png)
+
+![image-20230620111809254](sylvie233_templates_new.assets/image-20230620111809254.png)
+
+![image-20230620113606849](sylvie233_templates_new.assets/image-20230620113606849.png)
+
+![image-20230620113658988](sylvie233_templates_new.assets/image-20230620113658988.png)
+
+![image-20230620114043736](sylvie233_templates_new.assets/image-20230620114043736.png)
+
+
+
+
+
+#### 高精度乘法
+
+![image-20230620114554794](sylvie233_templates_new.assets/image-20230620114554794.png)
+
+
+
+
+
+
 
 #### NTT
 
@@ -1770,8 +1866,6 @@ int gcd(int a, int b) {
 #### FWT
 
 
-
-#### 生成函数
 
 
 
