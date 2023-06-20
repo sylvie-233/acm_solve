@@ -531,8 +531,267 @@ void solve() {
 #### 区间更新、区间求和
 
 ```
+/**
+ * @brief 区间更新，区间求和
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy[N];
+int sum[M];
+int n, d[N];
+
+void add(int l, int r, int v) {
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        d[i] += v;
+        sum[id[l]] += v;
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            d[i] += v;
+            sum[id[r]] += v;
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        lazy[i] += v;
+    }
+}
+
+int query(int l, int r, int v) {
+    int res = 0;
+    for (int i = l; i <= std::min(id[l] * len, r); i++) {
+        res += d[i] + lazy[id[l]];
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            res += d[i] + lazy[id[r]];
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        res += sum[i] + len * lazy[i];
+    }
+    return res;
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+        sum[id[i]] += d[i];
+    }
+}
+```
+
+
+
+#### 区间开方、区间求和
 
 ```
+/**
+ * @brief 区间开方，区间求和
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy[N];
+bool used[M], sum[M];
+int n, d[N];
+
+void exec_sqrt(int x) {
+    if (used[x]) {
+        return;
+    }
+    used[x] = true;
+    sum[x] = 0;
+    for (int i = (x - 1) * len + 1; i <= x * len; i++) {
+        d[i] = std::sqrt(d[i]);
+        sum[x] += d[i];
+        if (d[i] > 1) {
+            used[x] = false;
+        }
+    }
+}
+
+void add(int l, int r) {
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        sum[id[l]] -= d[i];
+        d[i] = std::sqrt(d[i]);
+        sum[id[l]] += d[i];
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            sum[id[r]] -= d[i];
+            d[i] = std::sqrt(d[i]);
+            sum[id[r]] += d[i];
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        exec_sqrt(i);
+    }
+}
+
+int query(int l, int r, int v) {
+    int res = 0;
+    for (int i = l; i <= std::min(id[l] * len, r); i++) {
+        res += d[i];
+    }
+    if (id[l] != id[r]) {
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            res += d[i];
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        res += sum[i];
+    }
+    return res;
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+        sum[id[i]] += d[i];
+    }
+}
+```
+
+
+
+#### 区间乘法、区间加法、单点查询
+
+```
+/**
+ * @brief 区间乘法，区间加法，单点查询
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy_add[M], lazy_mul[M];
+int n, d[N];
+
+void reset(int x) {
+    for (int i = (x - 1) * len + 1; i <= std::min(x * len, n); i++) {
+        d[i] = d[i] * lazy_mul[x] + lazy_add[x];
+    }
+    lazy_mul[x] = 1;
+    lazy_add[x] = 0;
+}
+
+void add(int f, int l, int r, int v) {
+    reset(id[l]);
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        if (f) {
+            d[i] *= v;
+        } else {
+            d[i] += v;
+        }
+    }
+    if (id[l] != id[r]) {
+        reset(id[r]);
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            if (f) {
+                d[i] *= v;
+            } else {
+                d[i] += v;
+            }
+
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        if (f) {
+            lazy_mul[i] *= v;
+            lazy_add[i] *= v;
+        } else {
+            lazy_add[i] += v;
+        }
+    }
+}
+
+void solve() {
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+    }
+    for (int i = 1; i <= id[n]; i++) {
+        lazy_add[i] = 0;
+        lazy_mul[i] = 1;
+    }
+    // 查询：d[i]*lazy_mul[id[i]]+lazy[id[i]]
+}
+```
+
+
+
+#### 区间查询值为v的个数，并将该区间所有元素改为v
+
+```
+/**
+ * @brief 区间查询值为v的个数，并将该区间所有元素改为v
+ *  数据范围：1~n, M为sqrt(N)
+ * 
+ */
+int len, id[N], lazy[M];
+int n, d[N];
+
+void reset(int x) {
+    if (lazy[x] == -1) {
+        return;
+    }
+    for (int i = (x - 1) * len + 1; i <= std::min(x * len, n); i++) {
+        d[i] = lazy[x];
+    }
+    lazy[x] = -1;
+}
+
+int query(int l, int r, int v) {
+    int res = 0;
+    reset(id[l]);
+    for (int i = l; i < std::min(id[l] * len, r); i++) {
+        if (d[i] != v) {
+            d[i] = v;
+        } else {
+            res++;
+        }
+    }
+    if (id[l] != id[r]) {
+        reset(id[r]);
+        for (int i = (id[r] - 1) * len + 1; i <= r; i++) {
+            if (d[i] != v) {
+                d[i] = v;
+            } else {
+                res++;
+            }
+        }
+    }
+    for (int i = id[l] + 1; i <= id[r] - 1; i++) {
+        if (lazy[i] != -1) {
+            if (lazy[i] != v) {
+                lazy[i] = v;
+            } else {
+                res += len;
+            }
+        } else {
+            for (int j = (i - 1) * len + 1; j <= i * len; j++) {
+                if (d[j] != v) {
+                    d[j] = v;
+                } else {
+                    res++;
+                }
+            }
+        }
+    }
+    return res;
+}
+
+void solve() {
+    std::memset(lazy, -1, sizeof(lazy));
+    len = std::sqrt(n);
+    for (int i = 1; i <= n; i++) {
+        id[i] = (i - 1) / len + 1;
+    }
+}
+```
+
+
+
+
 
 
 
@@ -622,6 +881,42 @@ bitset:
 
 #### 单调栈
 
+##### 柱形图长方形最大面积
+
+```
+/**
+ * @brief 单调栈（柱形图包含的长方形的最大面积）
+ *  数据范围：1~n
+ */
+int n, h[N], l[N], r[N];
+
+int solve() {
+    std::stack<int> sta;
+    for (int i = 1; i <= n; i++) {
+        while (!sta.empty() && h[sta.top()] >= h[i]) {
+            sta.pop();
+        }
+        l[i] = sta.empty() ? 1 : sta.top() + 1;
+        sta.push(i);
+    }
+    std::stack<int> sta2;
+    for (int i = n; i >= 1; i++) {
+        while (!sta2.empty() && h[sta2.top()] >= h[i]) {
+            sta2.pop();
+        }
+        r[i] = sta2.empty() ? n : sta2.top() - 1;
+        sta2.push(i);
+    }
+    int res = 0;
+    for (int i = 1; i <= n; i++) {
+        res = std::max(res, (r[i] - l[i] + 1) * h[i]);
+    }
+    return res;
+}
+```
+
+
+
 
 
 ### 队列
@@ -638,6 +933,50 @@ bitset:
 
 ##### 滑动窗口最值
 
+```
+/**
+ * @brief 单调队列求固定长度区间最大、小值
+ *  索引范围：1~n，长度：k
+ *  mx[]、mn[]的索引范围：[1,n-k+1]
+ * 
+ */
+int n, k, d[N], mn[N], mx[N];
+std::deque<int> dq;
+
+void clear(std::deque<int>& dq) {
+    std::deque<int> empty;
+    std::swap(empty, dq);
+}
+
+void solve() {
+    for (int i = 1; i <= n; i++) {
+        while (!dq.empty() && d[dq.back()] >= d[i]) {
+            dq.pop_back();
+        }
+        dq.push_back(i);
+        if (i - k + 1 > 0) {
+            mn[i - k + 1] = d[dq.front()];
+            if (dq.front() == i - k + 1) {
+                dq.pop_front();
+            }
+        }
+    }
+    clear(dq);
+    for (int i = 1; i <= n; i++) {
+        while (!dq.empty() && d[dq.back()] <= d[i]) {
+            dq.pop_back();
+        }
+        dq.push_back(i);
+        if (i - k + 1 > 0) {
+            mx[i -k + 1] = d[dq.front()];
+            if (dq.front() == i - k + 1) {
+                dq.pop_front();
+            }
+        }
+    }
+}
+```
+
 ![image-20230618100644229](sylvie233_templates_new.assets/image-20230618100644229.png)
 
 ![image-20230618101215177](sylvie233_templates_new.assets/image-20230618101215177.png)
@@ -646,11 +985,15 @@ bitset:
 
 
 
+##### 连续子序列的最大和
 
+![image-20230620193230679](sylvie233_templates_new.assets/image-20230620193230679.png)
 
+![image-20230620193409450](sylvie233_templates_new.assets/image-20230620193409450.png)
 
+![image-20230620193731528](sylvie233_templates_new.assets/image-20230620193731528.png)
 
-​	
+​	![image-20230620193755132](sylvie233_templates_new.assets/image-20230620193755132.png)
 
 
 
@@ -1861,6 +2204,20 @@ int gcd(int a, int b) {
 
 #### NTT
 
+![image-20230620184720901](sylvie233_templates_new.assets/image-20230620184720901.png)
+
+![image-20230620185004173](sylvie233_templates_new.assets/image-20230620185004173.png)
+
+![image-20230620185021850](sylvie233_templates_new.assets/image-20230620185021850.png)
+
+![image-20230620185111967](sylvie233_templates_new.assets/image-20230620185111967.png)
+
+![image-20230620185212373](sylvie233_templates_new.assets/image-20230620185212373.png)
+
+![image-20230620185310778](sylvie233_templates_new.assets/image-20230620185310778.png)
+
+
+
 
 
 #### FWT
@@ -2205,6 +2562,44 @@ int gcd(int a, int b) {
 
 
 
+##### 单调队列优化
+
+![image-20230620194148762](sylvie233_templates_new.assets/image-20230620194148762.png)
+
+![image-20230620194930620](sylvie233_templates_new.assets/image-20230620194930620.png)
+
+![image-20230620200826386](sylvie233_templates_new.assets/image-20230620200826386.png)
+
+
+
+
+
+
+
+
+
+#### 混合背包
+
+![image-20230620222350493](sylvie233_templates_new.assets/image-20230620222350493.png)
+
+![image-20230620222606335](sylvie233_templates_new.assets/image-20230620222606335.png)
+
+![image-20230620222729596](sylvie233_templates_new.assets/image-20230620222729596.png)
+
+
+
+
+
+#### 二维费用背包
+
+![image-20230620222942576](sylvie233_templates_new.assets/image-20230620222942576.png)
+
+
+
+![image-20230620223204217](sylvie233_templates_new.assets/image-20230620223204217.png)
+
+
+
 
 
 
@@ -2430,6 +2825,32 @@ int gcd(int a, int b) {
 ### 特殊计数
 
 #### 斐波那契数列
+
+
+
+
+
+#### 圆排列
+
+![image-20230620185638301](sylvie233_templates_new.assets/image-20230620185638301.png)
+
+
+
+##### 错位排列
+
+![image-20230620190151586](sylvie233_templates_new.assets/image-20230620190151586.png)
+
+![image-20230620190425110](sylvie233_templates_new.assets/image-20230620190425110.png)
+
+![image-20230620190457991](sylvie233_templates_new.assets/image-20230620190457991.png)
+
+
+
+
+
+
+
+
 
 
 
@@ -2758,6 +3179,44 @@ int gcd(int a, int b) {
 ![image-20230609173100532](sylvie233_templates_new.assets/image-20230609173100532.png)
 
 ![image-20230609173557620](sylvie233_templates_new.assets/image-20230609173557620.png)
+
+![image-20230620214534825](sylvie233_templates_new.assets/image-20230620214534825.png)
+
+
+
+![image-20230620214922632](sylvie233_templates_new.assets/image-20230620214922632.png)
+
+![image-20230620215144318](sylvie233_templates_new.assets/image-20230620215144318.png)
+
+
+
+![image-20230620215442591](sylvie233_templates_new.assets/image-20230620215442591.png)
+
+
+
+![image-20230620220215825](sylvie233_templates_new.assets/image-20230620220215825.png)
+
+![image-20230620220239624](sylvie233_templates_new.assets/image-20230620220239624.png)
+
+
+
+![image-20230620220922080](sylvie233_templates_new.assets/image-20230620220922080.png)
+
+![image-20230620221120926](sylvie233_templates_new.assets/image-20230620221120926.png)
+
+![image-20230620221431900](sylvie233_templates_new.assets/image-20230620221431900.png)
+
+![image-20230620221442376](sylvie233_templates_new.assets/image-20230620221442376.png)
+
+![image-20230620221921434](sylvie233_templates_new.assets/image-20230620221921434.png)
+
+
+
+![image-20230620222126395](sylvie233_templates_new.assets/image-20230620222126395.png)
+
+
+
+
 
 
 
