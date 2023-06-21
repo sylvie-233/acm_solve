@@ -1661,6 +1661,22 @@ void init() {
 
 ### 莫队
 
+![image-20230621223549549](sylvie233_templates_new.assets/image-20230621223549549.png)
+
+![image-20230621223714577](sylvie233_templates_new.assets/image-20230621223714577.png)
+
+![image-20230621223810200](sylvie233_templates_new.assets/image-20230621223810200.png)
+
+![image-20230621223856521](sylvie233_templates_new.assets/image-20230621223856521.png)
+
+![image-20230621224646173](sylvie233_templates_new.assets/image-20230621224646173.png)
+
+![image-20230621224834439](sylvie233_templates_new.assets/image-20230621224834439.png)
+
+
+
+
+
 #### 带修莫队
 
 
@@ -2690,6 +2706,14 @@ int gcd(int a, int b) {
 
 
 
+#### 树的直径
+
+![image-20230621234359432](sylvie233_templates_new.assets/image-20230621234359432.png)
+
+![image-20230621234845085](sylvie233_templates_new.assets/image-20230621234845085.png)
+
+![image-20230621235116329](sylvie233_templates_new.assets/image-20230621235116329.png)
+
 
 
 
@@ -2890,9 +2914,45 @@ int gcd(int a, int b) {
 
 #### 第一类斯特林数
 
+![image-20230621225951150](sylvie233_templates_new.assets/image-20230621225951150.png)
+
+![image-20230621230100301](sylvie233_templates_new.assets/image-20230621230100301.png)
+
+![image-20230621231121633](sylvie233_templates_new.assets/image-20230621231121633.png)
 
 
-#### 第二类斯特林树
+
+
+
+#### 第二类斯特林数
+
+![image-20230621231554754](sylvie233_templates_new.assets/image-20230621231554754.png)
+
+![image-20230621231713954](sylvie233_templates_new.assets/image-20230621231713954.png)
+
+![image-20230621232047321](sylvie233_templates_new.assets/image-20230621232047321.png)
+
+![image-20230621232230769](sylvie233_templates_new.assets/image-20230621232230769.png)
+
+
+
+
+
+##### 斯特林反演
+
+![image-20230621233106492](sylvie233_templates_new.assets/image-20230621233106492.png)
+
+![image-20230621233242449](sylvie233_templates_new.assets/image-20230621233242449.png)
+
+![image-20230621233825570](sylvie233_templates_new.assets/image-20230621233825570.png)
+
+![image-20230621234012472](sylvie233_templates_new.assets/image-20230621234012472.png)
+
+![image-20230621234031084](sylvie233_templates_new.assets/image-20230621234031084.png)
+
+
+
+
 
 
 
