@@ -2636,6 +2636,34 @@ int gcd(int a, int b) {
 
 
 
+#### 背包问题方案数
+
+![image-20230623212551107](sylvie233_templates_new.assets/image-20230623212551107.png)
+
+![image-20230623212712820](sylvie233_templates_new.assets/image-20230623212712820.png)
+
+![image-20230623213031647](sylvie233_templates_new.assets/image-20230623213031647.png)
+
+
+
+
+
+#### 背包问题具体方案
+
+![image-20230623213630536](sylvie233_templates_new.assets/image-20230623213630536.png)
+
+![image-20230623213618970](sylvie233_templates_new.assets/image-20230623213618970.png)
+
+![image-20230623213912926](sylvie233_templates_new.assets/image-20230623213912926.png)
+
+![image-20230623214228084](sylvie233_templates_new.assets/image-20230623214228084.png)
+
+
+
+
+
+
+
 
 
 ### 区间DP
