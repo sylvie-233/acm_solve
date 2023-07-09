@@ -10,11 +10,11 @@
 
 ### 搜索
 
-#### 深度优先搜索
+#### DFS
 
 
 
-#### 广度优先搜索
+#### BFS
 
 
 
@@ -1641,7 +1641,11 @@ void init() {
 
 
 
-### Splay
+### 平衡树
+
+#### Splay
+
+
 
 #### Treap
 
@@ -2634,6 +2638,20 @@ int gcd(int a, int b) {
 
 
 
+#### 分组背包
+
+![image-20230622145931657](sylvie233_templates_new.assets/image-20230622145931657.png)
+
+![image-20230622150310410](sylvie233_templates_new.assets/image-20230622150310410.png)
+
+![image-20230622150449947](sylvie233_templates_new.assets/image-20230622150449947.png)
+
+![image-20230622150733096](sylvie233_templates_new.assets/image-20230622150733096.png)
+
+
+
+
+
 
 
 
@@ -2715,6 +2733,52 @@ int gcd(int a, int b) {
 ![image-20230621235116329](sylvie233_templates_new.assets/image-20230621235116329.png)
 
 
+
+
+
+#### 树的重心
+
+![image-20230622123134347](sylvie233_templates_new.assets/image-20230622123134347.png)
+
+![image-20230622123641511](sylvie233_templates_new.assets/image-20230622123641511.png)
+
+![image-20230622123920776](sylvie233_templates_new.assets/image-20230622123920776.png)
+
+
+
+
+
+
+
+#### 树的中心
+
+![image-20230622124414634](sylvie233_templates_new.assets/image-20230622124414634.png)
+
+![image-20230622124838253](sylvie233_templates_new.assets/image-20230622124838253.png)
+
+![image-20230622125008355](sylvie233_templates_new.assets/image-20230622125008355.png)
+
+![image-20230622125226184](sylvie233_templates_new.assets/image-20230622125226184.png)
+
+![image-20230622125414374](sylvie233_templates_new.assets/image-20230622125414374.png)
+
+![image-20230622125948699](sylvie233_templates_new.assets/image-20230622125948699.png)
+
+
+
+
+
+
+
+#### 树形背包
+
+![image-20230622153227796](sylvie233_templates_new.assets/image-20230622153227796.png)
+
+![image-20230622154132780](sylvie233_templates_new.assets/image-20230622154132780.png)
+
+![image-20230622154808735](sylvie233_templates_new.assets/image-20230622154808735.png)
+
+![image-20230622155020917](sylvie233_templates_new.assets/image-20230622155020917.png)
 
 
 
@@ -2817,6 +2881,10 @@ int gcd(int a, int b) {
 
 
 ### 二项式定理
+
+
+
+#### 二项式反演
 
 
 
@@ -3228,6 +3296,20 @@ int gcd(int a, int b) {
 
 ### 尺取
 
+![image-20230622134629383](sylvie233_templates_new.assets/image-20230622134629383.png)
+
+![image-20230622134801849](sylvie233_templates_new.assets/image-20230622134801849.png)
+
+![image-20230622134940857](sylvie233_templates_new.assets/image-20230622134940857.png)
+
+
+
+
+
+
+
+
+
 
 
 ### 前缀和
@@ -3305,6 +3387,12 @@ int gcd(int a, int b) {
 
 
 #### 三分
+
+![image-20230622133442105](sylvie233_templates_new.assets/image-20230622133442105.png)
+
+![image-20230622133625939](sylvie233_templates_new.assets/image-20230622133625939.png)
+
+
 
 
 
