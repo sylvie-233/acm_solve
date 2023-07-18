@@ -997,7 +997,45 @@ void solve() {
 
 
 
+
+
+
+
 ### 堆
+
+#### 左偏树
+
+可并堆
+
+![image-20230718185528096](sylvie233_templates_new.assets/image-20230718185528096.png)
+
+![image-20230718190919813](sylvie233_templates_new.assets/image-20230718190919813.png)
+
+![image-20230718191011033](sylvie233_templates_new.assets/image-20230718191011033.png)
+
+![image-20230718191117568](sylvie233_templates_new.assets/image-20230718191117568.png)
+
+并查集+左偏树
+
+![image-20230718191500285](sylvie233_templates_new.assets/image-20230718191500285.png)
+
+![image-20230718192234781](sylvie233_templates_new.assets/image-20230718192234781.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
