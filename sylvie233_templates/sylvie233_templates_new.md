@@ -22,7 +22,7 @@
 
 
 
-#### 双向宽搜
+#### 双向BFS
 
 
 
@@ -1023,7 +1023,11 @@ void solve() {
 
 
 
+#### 对顶堆
 
+求第K大
+
+![image-20230724110807662](sylvie233_templates_new.assets/image-20230724110807662.png)
 
 
 
@@ -1170,10 +1174,6 @@ int main() {
 
 ### 树
 
-#### 基环树
-
-
-
 #### 二叉树
 
 
@@ -1181,16 +1181,6 @@ int main() {
 
 
 #### 二叉搜索树
-
-
-
-#### 平衡树
-
-
-
-
-
-#### 左偏树
 
 
 
@@ -3380,13 +3370,133 @@ int gcd(int a, int b) {
 
 ### 前缀和
 
+区间和查询
+
+![image-20230724111402356](sylvie233_templates_new.assets/image-20230724111402356.png)
+
+![image-20230724111518525](sylvie233_templates_new.assets/image-20230724111518525.png)
+
+
+
+
+
+
+
+#### 二维前缀和
+
+![image-20230724111751744](sylvie233_templates_new.assets/image-20230724111751744.png)
+
+![image-20230724112245313](sylvie233_templates_new.assets/image-20230724112245313.png)
+
+
+
+
+
+
+
+
+
+#### 树上前缀和
+
+自顶向下求前缀和
+
+点前缀和：求路径上点的和（利用lca）
+
+边前缀和：求路径上边的和（利用lca）
+
+![image-20230724112843219](sylvie233_templates_new.assets/image-20230724112843219.png)
+
+![image-20230724113253783](sylvie233_templates_new.assets/image-20230724113253783.png)
+
+![image-20230724114147186](sylvie233_templates_new.assets/image-20230724114147186.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ### 滚动数组
 
+常用于DP的空间复杂度优化
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ### 差分
+
+区间操作转化为两点操作
+
+![image-20230724114752017](sylvie233_templates_new.assets/image-20230724114752017.png)
+
+![image-20230724114930575](sylvie233_templates_new.assets/image-20230724114930575.png)
+
+![image-20230724115754656](sylvie233_templates_new.assets/image-20230724115754656.png)
+
+
+
+
+
+
+
+#### 二维差分
+
+![image-20230724115957394](sylvie233_templates_new.assets/image-20230724115957394.png)
+
+![image-20230724120223901](sylvie233_templates_new.assets/image-20230724120223901.png)
+
+
+
+
+
+#### 树上差分
+
+点差分、边差分（子树和计算节点值）
+
+![image-20230724121757659](sylvie233_templates_new.assets/image-20230724121757659.png)
+
+![image-20230724122111662](sylvie233_templates_new.assets/image-20230724122111662.png)
+
+![image-20230724122221163](sylvie233_templates_new.assets/image-20230724122221163.png)
+
+![image-20230724122327489](sylvie233_templates_new.assets/image-20230724122327489.png)
+
+
+
+
+
+
+
+
+
+
 
 
 
