@@ -1184,6 +1184,42 @@ int main() {
 
 
 
+#### KD树
+
+
+
+##### 交替建树
+
+![image-20230803210752515](sylvie233_templates_new.assets/image-20230803210752515.png)
+
+![image-20230803211405255](sylvie233_templates_new.assets/image-20230803211405255.png)
+
+![image-20230803213412962](sylvie233_templates_new.assets/image-20230803213412962.png)
+
+![image-20230803214009830](sylvie233_templates_new.assets/image-20230803214009830.png)
+
+
+
+#### 虚树
+
+![image-20230803214315621](sylvie233_templates_new.assets/image-20230803214315621.png)
+
+![image-20230803214436556](sylvie233_templates_new.assets/image-20230803214436556.png)
+
+![image-20230803214900588](sylvie233_templates_new.assets/image-20230803214900588.png)
+
+![image-20230803215054998](sylvie233_templates_new.assets/image-20230803215054998.png)
+
+![image-20230803215925663](sylvie233_templates_new.assets/image-20230803215925663.png)
+
+![image-20230803220255028](sylvie233_templates_new.assets/image-20230803220255028.png)
+
+
+
+
+
+
+
 
 
 #### LCA
@@ -1738,8 +1774,6 @@ void init() {
 
 
 
-
-### KD树
 
 
 
